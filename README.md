@@ -1,6 +1,6 @@
 ## The Water Termperature
 
-[![Build Status](https://travis-ci.org/gj262/thewatertemp-reactified.svg?branch=master)](https://travis-ci.org/gj262/thewatertemp-reactified)
+[![Build Status](https://travis-ci.com/gj262/thewatertemp-reactified.svg?branch=master)](https://travis-ci.com/gj262/thewatertemp-reactified)
 
 [_The Water Temp_](http://thewatertemp.vmbed.com/) is an alternate view of water temperature data provided by the [NOAA CO-OPS](https://tidesandcurrents.noaa.gov/stations.html?type=Physical%20Oceanography).
 
