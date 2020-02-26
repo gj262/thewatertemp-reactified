@@ -3,4 +3,8 @@
   --label-background-color: #ddd;
   --label-font-size: 24px;
   --label-font-weight: normal;
+  --label-border-radius: 8px;
+
+  --input-border: 1px solid #ddd;
+  --input-height: 47px; /* font height+padding+border */
 }

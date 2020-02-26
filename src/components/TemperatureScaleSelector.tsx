@@ -13,10 +13,20 @@ class TemperatureScaleSelector extends React.Component<
     const { scale } = this.props;
 
     return (
-      <select name="temperatureScale" value={scale} onChange={this.onChange}>
-        <option value={TemperatureScale.FAHRENHEIT}>°F</option>
-        <option value={TemperatureScale.CELSIUS}>°C</option>
-      </select>
+      <>
+        <label htmlFor="temperatureScale" className="visually-hidden">
+          Choose a temperature scale
+        </label>
+        <select
+          id="temperatureScale"
+          name="temperature scale"
+          value={scale}
+          onChange={this.onChange}
+        >
+          <option value={TemperatureScale.FAHRENHEIT}>°F</option>
+          <option value={TemperatureScale.CELSIUS}>°C</option>
+        </select>
+      </>
     );
   }
 
