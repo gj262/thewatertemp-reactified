@@ -1,0 +1,4 @@
+.temperature-range {
+  display: flex;
+  justify-content: space-between;
+}

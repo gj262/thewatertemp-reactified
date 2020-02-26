@@ -10,12 +10,16 @@ export default {
 
 export const states = () => (
   <div style={{ display: "flex", flexDirection: "column" }}>
+    <h3>No Selection</h3>
     <SelectStation onChange={() => null} />
+    <h3>Loading</h3>
     <SelectStation loading onChange={() => null} />
+    <h3>A Selection</h3>
     <SelectStation
       station={{ name: "Sand Island, Midway Islands", id: "22" }}
       onChange={() => null}
     />
+    <h3>Options Open</h3>
     <SelectStation
       station={{ name: "Sand Island, Midway Islands", id: "22" }}
       stations={[
