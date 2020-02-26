@@ -1,7 +1,10 @@
 :root {
+  --regular-font-size: 14px;
+  --label-font-size: 24px;
+  --large-font-size: 72px;
+
   --label-padding: 8px;
   --label-background-color: #ddd;
-  --label-font-size: 24px;
   --label-font-weight: normal;
   --label-border-radius: 8px;
 

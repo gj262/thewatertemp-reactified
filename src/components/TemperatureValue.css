@@ -1,0 +1,13 @@
+.temperature-value {
+  display: flex;
+  flex-direction: column;
+  font-size: var(--label-font-size);
+}
+
+.temperature-value > span:nth-child(2) {
+  font-size: var(--regular-font-size);
+}
+
+.temperature-value > span.large:first-child {
+  font-size: var(--large-font-size);
+}
