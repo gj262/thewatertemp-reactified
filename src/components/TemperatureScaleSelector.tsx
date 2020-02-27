@@ -3,8 +3,12 @@ import { TemperatureScale } from "../types";
 
 interface TemperatureScaleSelectorProps {
   scale: TemperatureScale;
-  onChange: Function;
+  onChange: (scale: TemperatureScale) => void;
 }
+
+export type TemperatureScaleSelectorComponentType = React.ComponentType<
+  TemperatureScaleSelectorProps
+>;
 
 class TemperatureScaleSelector extends React.Component<
   TemperatureScaleSelectorProps
@@ -33,7 +37,7 @@ class TemperatureScaleSelector extends React.Component<
   onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { onChange } = this.props;
 
-    onChange(e.target.value);
+    onChange(e.target.value as TemperatureScale);
   };
 }
 

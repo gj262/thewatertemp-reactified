@@ -2,10 +2,12 @@ import React from "react";
 import "./Header.css";
 
 interface HeaderProps {
-  right?: React.ReactNode;
+  right: React.ReactNode;
 }
 
-const Header: React.FunctionComponent<HeaderProps> = ({ right }) => (
+export type HeaderComponentType = React.FunctionComponent<HeaderProps>;
+
+const Header: HeaderComponentType = ({ right }) => (
   <header>
     <h1>The Water Temperature</h1>
     <span>{right}</span>

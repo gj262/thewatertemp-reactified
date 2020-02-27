@@ -4,7 +4,7 @@ import { render } from "@testing-library/react";
 import Header from "./Header";
 
 test("renders", () => {
-  const { getByText } = render(<Header />);
+  const { getByText } = render(<Header right={<span>RIGHT</span>} />);
   expect(getByText(/the water temperature/i)).toBeInTheDocument();
 });
 
