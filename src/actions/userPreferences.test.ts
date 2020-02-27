@@ -1,4 +1,4 @@
-import { loadUserPreferences } from "./userPreferences";
+import { loadUserPreferences, updateUserPreferences } from "./userPreferences";
 import { TemperatureScale, ActionTypes } from "../types";
 
 const defaultAction = {
@@ -11,7 +11,8 @@ const defaultAction = {
 test("dispatches the default user preferences", () => {
   const dispatch = jest.fn();
   const localStorage = {
-    getItem: jest.fn((x: string) => null)
+    getItem: jest.fn((x: string) => null),
+    setItem: jest.fn()
   };
   loadUserPreferences(dispatch, localStorage);
   expect(dispatch).toBeCalledWith(defaultAction);
@@ -22,8 +23,9 @@ test("dispatches stored user preferences", () => {
   const dispatch = jest.fn();
   const localStorage = {
     getItem: jest.fn((x: string) => {
-      return JSON.stringify({ scale: TemperatureScale.CELSIUS });
-    })
+      return JSON.stringify({ temperatureScale: TemperatureScale.CELSIUS });
+    }),
+    setItem: jest.fn()
   };
   loadUserPreferences(dispatch, localStorage);
   expect(dispatch).toBeCalledWith({
@@ -37,7 +39,8 @@ test("dispatches stored user preferences", () => {
 test("resiliency (1)", () => {
   const dispatch = jest.fn();
   const localStorage = {
-    getItem: jest.fn((x: string) => "URG")
+    getItem: jest.fn((x: string) => "URG"),
+    setItem: jest.fn()
   };
   loadUserPreferences(dispatch, localStorage);
   expect(dispatch).toBeCalledWith(defaultAction);
@@ -46,7 +49,8 @@ test("resiliency (1)", () => {
 test("resiliency (2)", () => {
   const dispatch = jest.fn();
   const localStorage = {
-    getItem: jest.fn((x: string) => "{}")
+    getItem: jest.fn((x: string) => "{}"),
+    setItem: jest.fn()
   };
   loadUserPreferences(dispatch, localStorage);
   expect(dispatch).toBeCalledWith(defaultAction);
@@ -55,7 +59,8 @@ test("resiliency (2)", () => {
 test("resiliency (3)", () => {
   const dispatch = jest.fn();
   const localStorage = {
-    getItem: jest.fn((x: string) => "URG")
+    getItem: jest.fn((x: string) => "URG"),
+    setItem: jest.fn()
   };
   loadUserPreferences(dispatch, localStorage);
   expect(dispatch).toBeCalledWith(defaultAction);
@@ -65,9 +70,44 @@ test("resiliency (4)", () => {
   const dispatch = jest.fn();
   const localStorage = {
     getItem: jest.fn((x: string) => {
-      return JSON.stringify({ scale: "K" });
-    })
+      return JSON.stringify({ temperatureScale: "K" });
+    }),
+    setItem: jest.fn()
   };
   loadUserPreferences(dispatch, localStorage);
   expect(dispatch).toBeCalledWith(defaultAction);
+});
+
+test("dispatches updated user preferences", () => {
+  const dispatch = jest.fn();
+  const localStorage = {
+    getItem: jest.fn(),
+    setItem: jest.fn()
+  };
+  updateUserPreferences(dispatch, localStorage, {
+    temperatureScale: TemperatureScale.CELSIUS
+  });
+  expect(dispatch).toBeCalledWith({
+    type: ActionTypes.USER_PREFERENCES_UPDATED,
+    payload: {
+      temperatureScale: TemperatureScale.CELSIUS
+    }
+  });
+  expect(localStorage.setItem).toBeCalledTimes(1);
+});
+
+test("stores updated user preferences", () => {
+  const dispatch = jest.fn();
+  const localStorage = {
+    getItem: jest.fn(),
+    setItem: jest.fn()
+  };
+  updateUserPreferences(dispatch, localStorage, {
+    temperatureScale: TemperatureScale.CELSIUS
+  });
+  expect(localStorage.setItem.mock.calls[0][1]).toBe(
+    JSON.stringify({
+      temperatureScale: TemperatureScale.CELSIUS
+    })
+  );
 });

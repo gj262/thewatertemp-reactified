@@ -17,8 +17,15 @@ export class Temperature {
   }
 }
 
+interface _UserPreferences {
+  temperatureScale: TemperatureScale;
+}
+
+export type UserPreferences = _UserPreferences | null;
+
 export enum ActionTypes {
-  USER_PREFERENCES_LOADED = "USER_PREFERENCES_LOADED"
+  USER_PREFERENCES_LOADED = "USER_PREFERENCES_LOADED",
+  USER_PREFERENCES_UPDATED = "USER_PREFERENCES_UPDATED"
 }
 
 export interface Action {
@@ -32,4 +39,5 @@ export interface DispatchFunction {
 
 export interface LocalStorage {
   getItem: (name: string) => string | null;
+  setItem: (name: string, value: string) => void;
 }

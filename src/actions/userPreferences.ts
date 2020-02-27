@@ -2,8 +2,10 @@ import {
   TemperatureScale,
   ActionTypes,
   DispatchFunction,
-  LocalStorage
+  LocalStorage,
+  UserPreferences
 } from "../types";
+
 import { DEFAULTS } from "../defaults";
 
 const USER_PREFS = "user_prefs";
@@ -17,7 +19,7 @@ export function loadUserPreferences(
   if (stored) {
     try {
       const storedObject = JSON.parse(stored);
-      scale = storedObject.scale || DEFAULTS.TEMPERATURE_SCALE;
+      scale = storedObject.temperatureScale || DEFAULTS.TEMPERATURE_SCALE;
       if (!(scale in TemperatureScale)) {
         scale = DEFAULTS.TEMPERATURE_SCALE;
       }
@@ -30,5 +32,17 @@ export function loadUserPreferences(
     payload: {
       temperatureScale: scale
     }
+  });
+}
+
+export function updateUserPreferences(
+  dispatch: DispatchFunction,
+  localStorage: LocalStorage,
+  preferences: UserPreferences
+) {
+  localStorage.setItem(USER_PREFS, JSON.stringify(preferences));
+  dispatch({
+    type: ActionTypes.USER_PREFERENCES_UPDATED,
+    payload: preferences
   });
 }
