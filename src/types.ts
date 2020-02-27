@@ -16,3 +16,20 @@ export class Temperature {
     this.scale = scale;
   }
 }
+
+export enum ActionTypes {
+  USER_PREFERENCES_LOADED = "USER_PREFERENCES_LOADED"
+}
+
+export interface Action {
+  type: ActionTypes;
+  payload?: any;
+}
+
+export interface DispatchFunction {
+  (action: Action): void;
+}
+
+export interface LocalStorage {
+  getItem: (name: string) => string | null;
+}
