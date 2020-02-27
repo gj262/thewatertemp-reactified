@@ -1,7 +1,7 @@
+import { Dispatch } from "redux";
 import {
   TemperatureScale,
   ActionTypes,
-  DispatchFunction,
   LocalStorage,
   UserPreferences
 } from "../types";
@@ -11,7 +11,7 @@ import { DEFAULTS } from "../defaults";
 const USER_PREFS = "user_prefs";
 
 export function loadUserPreferences(
-  dispatch: DispatchFunction,
+  dispatch: Dispatch,
   localStorage: LocalStorage
 ) {
   const stored = localStorage.getItem(USER_PREFS);
@@ -36,7 +36,7 @@ export function loadUserPreferences(
 }
 
 export function updateUserPreferences(
-  dispatch: DispatchFunction,
+  dispatch: Dispatch,
   localStorage: LocalStorage,
   preferences: UserPreferences
 ) {

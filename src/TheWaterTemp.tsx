@@ -1,22 +1,16 @@
 import React from "react";
+import { connect } from "react-redux";
+import { Dispatch } from "redux";
 import "./TheWaterTemp.css";
-import { HeaderComponentType } from "./components/Header";
-import { TemperatureScaleSelectorComponentType } from "./components/TemperatureScaleSelector";
+import { RootState } from "./reducers";
+import * as fromUserPreferences from "./reducers/userPreferences";
+import makeActions, { ActionTypes } from "./actions";
+import AllComponents, { ComponentTypes } from "./components";
 import { TemperatureScale, UserPreferences } from "./types";
 
-export interface Actions {
-  loadUserPreferences: () => void;
-  updateUserPreferences: (userPreferences: UserPreferences) => void;
-}
-
-export interface Components {
-  Header: HeaderComponentType;
-  TemperatureScaleSelector: TemperatureScaleSelectorComponentType;
-}
-
 interface TheWaterTempProps {
-  actions: Actions;
-  Components: Components;
+  actions: ActionTypes;
+  Components: ComponentTypes;
   userPreferences: UserPreferences;
 }
 
@@ -55,3 +49,26 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
     });
   };
 }
+
+interface TheWaterTempWrappedProps {
+  userPreferences: UserPreferences;
+  dispatch: Dispatch;
+}
+
+const TheWaterTempWrapped: React.FunctionComponent<TheWaterTempWrappedProps> = props => (
+  <TheWaterTemp
+    {...props}
+    actions={makeActions(props.dispatch, window.localStorage)}
+    Components={AllComponents}
+  />
+);
+
+export const mapStateToProps = (state: RootState) => {
+  return {
+    userPreferences: fromUserPreferences.getUserPreferences(
+      state.userPreferences
+    )
+  };
+};
+
+export default connect(mapStateToProps)(TheWaterTempWrapped);

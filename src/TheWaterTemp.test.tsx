@@ -1,6 +1,7 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import { TheWaterTemp, Components } from "./TheWaterTemp";
+import { TheWaterTemp } from "./TheWaterTemp";
+import { ComponentTypes } from "./components";
 import { TemperatureScale } from "./types";
 
 const mockActions = {
@@ -8,22 +9,22 @@ const mockActions = {
   updateUserPreferences: jest.fn()
 };
 
-const mockComponents: Components = {
+const mockComponents: ComponentTypes = {
   Header: ({ right }) => <div>HEADER{right}</div>,
   TemperatureScaleSelector: ({ scale }) => <div>SCALE: {scale}</div>
 };
 
-function makeMockComponentsAndTriggers() {
-  let myTemperatureScaleChangeTrigger = (scale: TemperatureScale) => {};
-  const mockComponents: Components = {
+function makeMockComponentsWithTriggers() {
+  let temperatureScaleChangeTrigger = (scale: TemperatureScale) => {};
+  const mockComponents: ComponentTypes = {
     Header: ({ right }) => <div>HEADER{right}</div>,
     TemperatureScaleSelector: ({ scale, onChange }) => {
-      myTemperatureScaleChangeTrigger = onChange;
+      temperatureScaleChangeTrigger = onChange;
       return <div>SCALE: {scale}</div>;
     }
   };
   return {
-    getTemperatureScaleChangeTrigger: () => myTemperatureScaleChangeTrigger,
+    getTemperatureScaleChangeTrigger: () => temperatureScaleChangeTrigger,
     mockComponents
   };
 }
@@ -32,7 +33,7 @@ const userPreferences = {
   temperatureScale: TemperatureScale.CELSIUS
 };
 
-test("loads a users preferences", () => {
+test("loads users preferences", () => {
   render(
     <TheWaterTemp
       actions={mockActions}
@@ -65,7 +66,7 @@ test("displays no header until the user preferences arrive", () => {
   expect(queryByText("HEADER")).toBeNull();
 });
 
-test("gives it the input temperature scale", () => {
+test("passes down the users temperature scale to display", () => {
   const { getByText } = render(
     <TheWaterTemp
       actions={mockActions}
@@ -78,11 +79,11 @@ test("gives it the input temperature scale", () => {
   ).not.toBeNull();
 });
 
-test("updates users preferences", () => {
+test("may update users preferences", () => {
   const {
     getTemperatureScaleChangeTrigger,
     mockComponents
-  } = makeMockComponentsAndTriggers();
+  } = makeMockComponentsWithTriggers();
   render(
     <TheWaterTemp
       actions={mockActions}

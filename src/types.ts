@@ -1,8 +1,3 @@
-export enum TemperatureScale {
-  FAHRENHEIT = "FAHRENHEIT",
-  CELSIUS = "CELSIUS"
-}
-
 export interface Station {
   id: string;
   name: string;
@@ -15,6 +10,11 @@ export class Temperature {
     this.value = value;
     this.scale = scale;
   }
+}
+
+export enum TemperatureScale {
+  FAHRENHEIT = "FAHRENHEIT",
+  CELSIUS = "CELSIUS"
 }
 
 interface _UserPreferences {
@@ -31,10 +31,6 @@ export enum ActionTypes {
 export interface Action {
   type: ActionTypes;
   payload?: any;
-}
-
-export interface DispatchFunction {
-  (action: Action): void;
 }
 
 export interface LocalStorage {
