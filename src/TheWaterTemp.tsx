@@ -6,20 +6,39 @@ import { RootState } from "./reducers";
 import * as fromUserPreferences from "./reducers/userPreferences";
 import makeActions, { ActionTypes } from "./actions";
 import AllComponents, { ComponentTypes } from "./components";
-import { TemperatureScale, UserPreferences } from "./types";
+import { TemperatureScale, UserPreferences, Station } from "./types";
 
 interface TheWaterTempProps {
   actions: ActionTypes;
   Components: ComponentTypes;
   userPreferences: UserPreferences;
+  loadingStations?: boolean;
+  station?: Station;
+  stations?: Station[];
+  loadingError?: string;
 }
 
 export class TheWaterTemp extends React.Component<TheWaterTempProps> {
   render() {
-    const { Components, userPreferences } = this.props;
+    const {
+      Components,
+      userPreferences,
+      loadingStations,
+      station,
+      stations,
+      loadingError
+    } = this.props;
 
     if (!userPreferences) {
       return null;
+    }
+
+    if (loadingError) {
+      return (
+        <div className="the-water-temp">
+          <span className="loading-error">{loadingError}</span>
+        </div>
+      );
     }
 
     return (
@@ -31,6 +50,12 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
               onChange={this.onTemperatureScaleChange}
             />
           }
+        />
+        <Components.SelectStation
+          onChange={this.onStationChange}
+          loading={!!loadingStations}
+          station={station}
+          stations={stations}
         />
       </div>
     );
@@ -47,6 +72,12 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
       ...userPreferences,
       temperatureScale: scale
     });
+  };
+
+  onStationChange = (station: Station) => {
+    const { actions } = this.props;
+
+    actions.updateSelectedStation(station);
   };
 }
 

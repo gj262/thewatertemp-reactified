@@ -10,6 +10,10 @@ interface SelectStationProps {
   _open?: boolean;
 }
 
+export type SelectStationComponentType = React.ComponentType<
+  SelectStationProps
+>;
+
 class SelectStation extends React.Component<
   SelectStationProps,
   { open: boolean; inputValue: string }

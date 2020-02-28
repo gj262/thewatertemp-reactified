@@ -1,4 +1,4 @@
-import { UserPreferences, LocalStorage } from "../types";
+import { UserPreferences, LocalStorage, Station } from "../types";
 
 import * as forUserPreferences from "./userPreferences";
 import { Dispatch } from "redux";
@@ -17,11 +17,13 @@ export default function makeActions(
       {},
       dispatch,
       localStorage
-    )
+    ),
+    updateSelectedStation: (station: Station) => {}
   };
 }
 
 export interface ActionTypes {
   loadUserPreferences: () => void;
   updateUserPreferences: (userPreferences: UserPreferences) => void;
+  updateSelectedStation: (station: Station) => void;
 }
