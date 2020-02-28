@@ -18,7 +18,8 @@ export default function makeActions(
       dispatch,
       localStorage
     ),
-    updateSelectedStation: (station: Station) => {}
+    updateSelectedStation: (station: Station) => {},
+    loadStations: () => {}
   };
 }
 
@@ -26,4 +27,5 @@ export interface ActionTypes {
   loadUserPreferences: () => void;
   updateUserPreferences: (userPreferences: UserPreferences) => void;
   updateSelectedStation: (station: Station) => void;
+  loadStations: () => Promise<void>;
 }

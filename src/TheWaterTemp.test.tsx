@@ -5,51 +5,14 @@ import { TheWaterTemp } from "./TheWaterTemp";
 import { ComponentTypes } from "./components";
 import { TemperatureScale, Station } from "./types";
 
-export const mockActions = {
-  loadUserPreferences: jest.fn(),
-  updateUserPreferences: jest.fn(),
-  updateSelectedStation: jest.fn()
-};
-
-export const mockComponents: ComponentTypes = {
-  Header: ({ right }) => <div>HEADER{right}</div>,
-  TemperatureScaleSelector: ({ scale }) => <div>SCALE: {scale}</div>,
-  SelectStation: ({ loading, station, stations }) => (
-    <div>
-      SELECT STATION {loading && "LOADING"} {station && station.name}{" "}
-      {stations && stations[0].name}
-    </div>
-  )
-};
-
-function makeMockComponentsWithTriggers() {
-  let temperatureScaleChangeTrigger = (scale: TemperatureScale) => {};
-  let stationChangeTrigger = (station: Station) => {};
-
-  const mocks: ComponentTypes = {
-    Header: mockComponents.Header,
-    TemperatureScaleSelector: ({ scale, onChange }) => {
-      temperatureScaleChangeTrigger = onChange;
-      return <div>SCALE: {scale}</div>;
-    },
-    SelectStation: ({ onChange }) => {
-      stationChangeTrigger = onChange;
-      return <div>SELECT STATION</div>;
-    }
-  };
-
-  return {
-    getTemperatureScaleChangeTrigger: () => temperatureScaleChangeTrigger,
-    getStationChangeTrigger: () => stationChangeTrigger,
-    mockComponents: mocks
-  };
-}
-
-export const userPreferences = {
+const userPreferences = {
   temperatureScale: TemperatureScale.CELSIUS
 };
 
 test("loads users preferences", () => {
+  const mockActions = makeMockActions();
+  const { mockComponents } = makeMockComponentsWithTriggers();
+
   render(
     <TheWaterTemp
       actions={mockActions}
@@ -57,10 +20,29 @@ test("loads users preferences", () => {
       userPreferences={userPreferences}
     />
   );
+
   expect(mockActions.loadUserPreferences).toBeCalledTimes(1);
 });
 
+test("loads stations", () => {
+  const mockActions = makeMockActions();
+  const { mockComponents } = makeMockComponentsWithTriggers();
+
+  render(
+    <TheWaterTemp
+      actions={mockActions}
+      Components={mockComponents}
+      userPreferences={userPreferences}
+    />
+  );
+
+  expect(mockActions.loadStations).toBeCalledTimes(1);
+});
+
 test("displays a header", () => {
+  const mockActions = makeMockActions();
+  const { mockComponents } = makeMockComponentsWithTriggers();
+
   const { getByText } = render(
     <TheWaterTemp
       actions={mockActions}
@@ -68,10 +50,14 @@ test("displays a header", () => {
       userPreferences={userPreferences}
     />
   );
+
   expect(getByText("HEADER")).not.toBeNull();
 });
 
 test("displays no header until the user preferences arrive", () => {
+  const mockActions = makeMockActions();
+  const { mockComponents } = makeMockComponentsWithTriggers();
+
   const { queryByText } = render(
     <TheWaterTemp
       actions={mockActions}
@@ -79,10 +65,14 @@ test("displays no header until the user preferences arrive", () => {
       userPreferences={null}
     />
   );
+
   expect(queryByText("HEADER")).toBeNull();
 });
 
 test("may display a loading error", () => {
+  const mockActions = makeMockActions();
+  const { mockComponents } = makeMockComponentsWithTriggers();
+
   const { queryByText } = render(
     <TheWaterTemp
       actions={mockActions}
@@ -91,10 +81,14 @@ test("may display a loading error", () => {
       loadingError="Cannot load the stations: blah"
     />
   );
+
   expect(queryByText("Cannot load the stations: blah")).not.toBeNull();
 });
 
 test("passes down the users temperature scale to display", () => {
+  const mockActions = makeMockActions();
+  const { mockComponents } = makeMockComponentsWithTriggers();
+
   const { getByText } = render(
     <TheWaterTemp
       actions={mockActions}
@@ -102,6 +96,7 @@ test("passes down the users temperature scale to display", () => {
       userPreferences={userPreferences}
     />
   );
+
   expect(
     getByText(new RegExp("SCALE: " + TemperatureScale.CELSIUS))
   ).not.toBeNull();
@@ -112,6 +107,8 @@ test("may update users preferences", () => {
     getTemperatureScaleChangeTrigger,
     mockComponents
   } = makeMockComponentsWithTriggers();
+  const mockActions = makeMockActions();
+
   render(
     <TheWaterTemp
       actions={mockActions}
@@ -120,6 +117,7 @@ test("may update users preferences", () => {
     />
   );
   getTemperatureScaleChangeTrigger()(TemperatureScale.FAHRENHEIT);
+
   expect(mockActions.updateUserPreferences).toBeCalledTimes(1);
   expect(mockActions.updateUserPreferences.mock.calls[0][0]).toStrictEqual({
     temperatureScale: TemperatureScale.FAHRENHEIT
@@ -127,6 +125,9 @@ test("may update users preferences", () => {
 });
 
 test("displays a station selector", () => {
+  const mockActions = makeMockActions();
+  const { mockComponents } = makeMockComponentsWithTriggers();
+
   const { getByText } = render(
     <TheWaterTemp
       actions={mockActions}
@@ -134,10 +135,14 @@ test("displays a station selector", () => {
       userPreferences={userPreferences}
     />
   );
+
   expect(getByText(/SELECT STATION/)).not.toBeNull();
 });
 
 test("passes loading", () => {
+  const mockActions = makeMockActions();
+  const { mockComponents } = makeMockComponentsWithTriggers();
+
   const { getByText } = render(
     <TheWaterTemp
       actions={mockActions}
@@ -146,10 +151,14 @@ test("passes loading", () => {
       loadingStations
     />
   );
+
   expect(getByText(/LOADING/)).not.toBeNull();
 });
 
 test("passes the current station", () => {
+  const mockActions = makeMockActions();
+  const { mockComponents } = makeMockComponentsWithTriggers();
+
   const { getByText } = render(
     <TheWaterTemp
       actions={mockActions}
@@ -158,10 +167,14 @@ test("passes the current station", () => {
       station={{ name: "Somewhere", id: "22" }}
     />
   );
+
   expect(getByText(/Somewhere/)).not.toBeNull();
 });
 
 test("passes the stations list", () => {
+  const mockActions = makeMockActions();
+  const { mockComponents } = makeMockComponentsWithTriggers();
+
   const { getByText } = render(
     <TheWaterTemp
       actions={mockActions}
@@ -170,6 +183,7 @@ test("passes the stations list", () => {
       stations={[{ name: "Elsewhere", id: "22" }]}
     />
   );
+
   expect(getByText(/Elsewhere/)).not.toBeNull();
 });
 
@@ -178,6 +192,8 @@ test("may update the station", () => {
     getStationChangeTrigger,
     mockComponents
   } = makeMockComponentsWithTriggers();
+  const mockActions = makeMockActions();
+
   render(
     <TheWaterTemp
       actions={mockActions}
@@ -186,9 +202,47 @@ test("may update the station", () => {
     />
   );
   getStationChangeTrigger()({ name: "Elsewhere", id: "22" });
+
   expect(mockActions.updateSelectedStation).toBeCalledTimes(1);
   expect(mockActions.updateSelectedStation.mock.calls[0][0]).toStrictEqual({
     name: "Elsewhere",
     id: "22"
   });
 });
+
+function makeMockActions() {
+  return {
+    loadUserPreferences: jest.fn(),
+    updateUserPreferences: jest.fn(),
+    updateSelectedStation: jest.fn(),
+    loadStations: jest.fn()
+  };
+}
+
+function makeMockComponentsWithTriggers() {
+  let temperatureScaleChangeTrigger = (scale: TemperatureScale) => {};
+  let stationChangeTrigger = (station: Station) => {};
+
+  const mocks: ComponentTypes = {
+    Header: ({ right }) => <div>HEADER{right}</div>,
+    TemperatureScaleSelector: ({ scale, onChange }) => {
+      temperatureScaleChangeTrigger = onChange;
+      return <div>SCALE: {scale}</div>;
+    },
+    SelectStation: ({ loading, station, stations, onChange }) => {
+      stationChangeTrigger = onChange;
+      return (
+        <div>
+          SELECT STATION {loading && "LOADING"} {station && station.name}{" "}
+          {stations && stations[0].name}
+        </div>
+      );
+    }
+  };
+
+  return {
+    getTemperatureScaleChangeTrigger: () => temperatureScaleChangeTrigger,
+    getStationChangeTrigger: () => stationChangeTrigger,
+    mockComponents: mocks
+  };
+}

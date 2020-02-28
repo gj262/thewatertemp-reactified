@@ -6744,7 +6744,7 @@ json-stable-stringify@^1.0.1:
   dependencies:
     jsonify "~0.0.0"
 
-json-stringify-safe@5.0.x, json-stringify-safe@~5.0.1:
+json-stringify-safe@5.0.x, json-stringify-safe@^5.0.1, json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
 
@@ -7335,6 +7335,10 @@ mkdirp@0.5.1, mkdirp@^0.5.1, mkdirp@~0.5.1:
   dependencies:
     minimist "0.0.8"
 
+mkdirp@^1.0.0:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.3.tgz#4cf2e30ad45959dddea53ad97d518b6c8205e1ea"
+
 moment@^2.18.1:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
@@ -7426,6 +7430,16 @@ no-case@^2.2.0:
   resolved "https://registry.yarnpkg.com/no-case/-/no-case-2.3.2.tgz#60b813396be39b3f1288a4c1ed5d1e7d28b464ac"
   dependencies:
     lower-case "^1.1.1"
+
+nock@^12.0.1:
+  version "12.0.1"
+  resolved "https://registry.yarnpkg.com/nock/-/nock-12.0.1.tgz#6d497d01f23cb52c733545c97e09e8318f6af801"
+  dependencies:
+    debug "^4.1.0"
+    json-stringify-safe "^5.0.1"
+    lodash "^4.17.13"
+    mkdirp "^1.0.0"
+    propagate "^2.0.0"
 
 node-ask@^1.0.1:
   version "1.0.1"
@@ -8830,6 +8844,10 @@ prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
     loose-envify "^1.4.0"
     object-assign "^4.1.1"
     react-is "^16.8.1"
+
+propagate@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/propagate/-/propagate-2.0.1.tgz#40cdedab18085c792334e64f0ac17256d38f9a45"
 
 property-information@^5.0.0:
   version "5.4.0"

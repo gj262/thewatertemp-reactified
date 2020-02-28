@@ -62,7 +62,10 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
   }
 
   componentDidMount() {
-    this.props.actions.loadUserPreferences();
+    const { actions } = this.props;
+
+    actions.loadUserPreferences();
+    actions.loadStations();
   }
 
   onTemperatureScaleChange = (scale: TemperatureScale) => {
