@@ -41,14 +41,14 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
 
     if (loadingError) {
       return (
-        <div className="the-water-temp">
+        <div className="the-water-temperature">
           <span className="loading-error">{loadingError}</span>
         </div>
       );
     }
 
     return (
-      <div className="the-water-temp">
+      <div className="the-water-temperature">
         <Components.Header
           right={
             <Components.TemperatureScaleSelector
@@ -133,13 +133,15 @@ const HandleRouting: React.FunctionComponent<HandleRoutingProps> = props => {
   }
 
   return (
-    <InjectComponentsAndActions
-      {...props}
-      {...stationProps}
-      navigateToStation={(station: Station) =>
-        navigate(`/stations/${station.id}`)
-      }
-    />
+    <div className="wrap">
+      <InjectComponentsAndActions
+        {...props}
+        {...stationProps}
+        navigateToStation={(station: Station) =>
+          navigate(`/stations/${station.id}`)
+        }
+      />
+    </div>
   );
 };
 

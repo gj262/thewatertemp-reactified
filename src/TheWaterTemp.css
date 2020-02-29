@@ -1,3 +1,24 @@
+.wrap {
+  display: flex;
+  justify-content: space-around;
+}
+
+.the-water-temperature {
+  min-width: var(--app-width);
+  max-width: var(--app-max-width);
+  flex-grow: 1;
+  margin: var(--app-spacing);
+}
+
+.the-water-temperature header {
+  margin-bottom: var(--app-spacing);
+}
+
+.the-water-temperature .select-station input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .loading-error {
   color: red;
 }

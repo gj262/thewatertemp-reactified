@@ -1,4 +1,8 @@
 :root {
+  --app-width: 360px;
+  --app-max-width: 540px;
+  --app-spacing: 12px;
+
   --regular-font-size: 14px;
   --label-font-size: 24px;
   --large-font-size: 72px;
