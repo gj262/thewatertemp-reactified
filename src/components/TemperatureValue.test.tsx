@@ -22,7 +22,19 @@ test("may show a caption", () => {
   expect(getByText("Min")).not.toBeNull();
 });
 
+test("captions may be react elements", () => {
+  const { getByText } = render(
+    <TemperatureValue temperature={t} caption={<span>I'm a caption</span>} />
+  );
+  expect(getByText("I'm a caption")).not.toBeNull();
+});
+
 test("may be large", () => {
   const { getByText } = render(<TemperatureValue temperature={t} large />);
   expect(getByText("12.3°")).toHaveClass("large");
+});
+
+test("missing temps show --.- to indicate loading", () => {
+  const { getByText } = render(<TemperatureValue caption="loading..." />);
+  expect(getByText(/--.-/)).not.toBeNull();
 });

@@ -64,6 +64,7 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
           stations={stations}
         />
         <StationInfo invalidStationId={invalidStationId} station={station} />
+        <h2>Latest reading:</h2>
       </div>
     );
   }

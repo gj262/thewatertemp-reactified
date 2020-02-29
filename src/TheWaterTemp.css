@@ -11,8 +11,15 @@
 }
 
 .the-water-temperature header,
-.the-water-temperature .select-station {
+.the-water-temperature .select-station,
+.the-water-temperature > a,
+.the-water-temperature > span {
   margin-bottom: var(--app-spacing);
+}
+
+.the-water-temperature > a,
+.the-water-temperature > span {
+  display: block;
 }
 
 .the-water-temperature .select-station input,
@@ -24,6 +31,15 @@
 .the-water-temperature > a,
 .the-water-temperature > span {
   padding-left: var(--label-padding);
+}
+
+h2 {
+  padding: var(--label-padding);
+  margin: 0;
+  font-size: var(--label-font-size);
+  font-weight: var(--label-font-weight);
+  background-color: var(--label-background-color);
+  border-radius: var(--label-border-radius);
 }
 
 .loading-error {
