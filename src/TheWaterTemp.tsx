@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Dispatch } from "redux";
+import { Router, navigate } from "@reach/router";
 import "./TheWaterTemp.css";
 import { RootState } from "./reducers";
 import * as fromUserPreferences from "./reducers/userPreferences";
@@ -8,6 +8,8 @@ import * as fromStations from "./reducers/stations";
 import makeActions, { ActionTypes } from "./actions";
 import AllComponents, { ComponentTypes } from "./components";
 import { TemperatureScale, UserPreferences, Station } from "./types";
+import { DEFAULTS } from "./defaults";
+import { Dispatch } from "redux";
 
 interface TheWaterTempProps {
   actions: ActionTypes;
@@ -17,6 +19,8 @@ interface TheWaterTempProps {
   station?: Station;
   stations?: Station[];
   loadingError?: string;
+  invalidStationId?: string;
+  navigateToStation: (station: Station) => void;
 }
 
 export class TheWaterTemp extends React.Component<TheWaterTempProps> {
@@ -27,7 +31,8 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
       loadingStations,
       station,
       stations,
-      loadingError
+      loadingError,
+      invalidStationId
     } = this.props;
 
     if (!userPreferences) {
@@ -58,6 +63,11 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
           station={station}
           stations={stations}
         />
+        {invalidStationId && (
+          <span className="loading-error">
+            This is not a valid station ID: {invalidStationId}
+          </span>
+        )}
       </div>
     );
   }
@@ -79,18 +89,17 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
   };
 
   onStationChange = (station: Station) => {
-    const { actions } = this.props;
+    const { navigateToStation } = this.props;
 
-    actions.updateSelectedStation(station);
+    navigateToStation(station);
   };
 }
 
-interface TheWaterTempWrappedProps {
-  userPreferences: UserPreferences;
+interface InjectComponentsAndActionsProps extends TheWaterTempProps {
   dispatch: Dispatch;
 }
 
-const TheWaterTempWrapped: React.FunctionComponent<TheWaterTempWrappedProps> = props => (
+const InjectComponentsAndActions: React.FunctionComponent<InjectComponentsAndActionsProps> = props => (
   <TheWaterTemp
     {...props}
     actions={makeActions(props.dispatch, window.localStorage)}
@@ -98,7 +107,43 @@ const TheWaterTempWrapped: React.FunctionComponent<TheWaterTempWrappedProps> = p
   />
 );
 
-export const mapStateToProps = (state: RootState) => {
+const WithRouting: React.FunctionComponent<any> = props => (
+  <Router>
+    <HandleRouting path="/" {...props} />
+    <HandleRouting path="/stations/:stationId" {...props} />
+  </Router>
+);
+
+interface HandleRoutingProps extends InjectComponentsAndActionsProps {
+  stationId?: string;
+}
+
+const HandleRouting: React.FunctionComponent<HandleRoutingProps> = props => {
+  let stationProps = {};
+  const stationId = props.stationId || DEFAULTS.STATION_ID;
+  if (props.stations) {
+    const station = props.stations.find(
+      (station: Station) => station.id === stationId
+    );
+    if (station) {
+      stationProps = { station };
+    } else {
+      stationProps = { invalidStationId: stationId };
+    }
+  }
+
+  return (
+    <InjectComponentsAndActions
+      {...props}
+      {...stationProps}
+      navigateToStation={(station: Station) =>
+        navigate(`/stations/${station.id}`)
+      }
+    />
+  );
+};
+
+const mapStateToProps = (state: RootState) => {
   return {
     userPreferences: fromUserPreferences.getUserPreferences(
       state.userPreferences
@@ -111,4 +156,6 @@ export const mapStateToProps = (state: RootState) => {
   };
 };
 
-export default connect(mapStateToProps)(TheWaterTempWrapped);
+const InjectStoreData = connect(mapStateToProps)(WithRouting);
+
+export default InjectStoreData;

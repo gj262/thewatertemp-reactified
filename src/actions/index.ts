@@ -1,4 +1,4 @@
-import { UserPreferences, LocalStorage, Station } from "../types";
+import { UserPreferences, LocalStorage } from "../types";
 
 import * as forUserPreferences from "./userPreferences";
 import * as forStations from "./stations";
@@ -19,7 +19,6 @@ export default function makeActions(
       dispatch,
       localStorage
     ),
-    updateSelectedStation: (station: Station) => {},
     loadStations: forStations.loadStations.bind({}, dispatch)
   };
 }
@@ -27,6 +26,5 @@ export default function makeActions(
 export interface ActionTypes {
   loadUserPreferences: () => void;
   updateUserPreferences: (userPreferences: UserPreferences) => void;
-  updateSelectedStation: (station: Station) => void;
   loadStations: () => Promise<void>;
 }

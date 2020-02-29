@@ -18,6 +18,7 @@ test("loads users preferences", () => {
       actions={mockActions}
       Components={mockComponents}
       userPreferences={userPreferences}
+      navigateToStation={jest.fn()}
     />
   );
 
@@ -33,6 +34,7 @@ test("loads stations", () => {
       actions={mockActions}
       Components={mockComponents}
       userPreferences={userPreferences}
+      navigateToStation={jest.fn()}
     />
   );
 
@@ -48,6 +50,7 @@ test("displays a header", () => {
       actions={mockActions}
       Components={mockComponents}
       userPreferences={userPreferences}
+      navigateToStation={jest.fn()}
     />
   );
 
@@ -63,6 +66,7 @@ test("displays no header until the user preferences arrive", () => {
       actions={mockActions}
       Components={mockComponents}
       userPreferences={null}
+      navigateToStation={jest.fn()}
     />
   );
 
@@ -79,6 +83,7 @@ test("may display a loading error", () => {
       Components={mockComponents}
       userPreferences={userPreferences}
       loadingError="Cannot load the stations: blah"
+      navigateToStation={jest.fn()}
     />
   );
 
@@ -94,6 +99,7 @@ test("passes down the users temperature scale to display", () => {
       actions={mockActions}
       Components={mockComponents}
       userPreferences={userPreferences}
+      navigateToStation={jest.fn()}
     />
   );
 
@@ -114,6 +120,7 @@ test("may update users preferences", () => {
       actions={mockActions}
       Components={mockComponents}
       userPreferences={userPreferences}
+      navigateToStation={jest.fn()}
     />
   );
   getTemperatureScaleChangeTrigger()(TemperatureScale.FAHRENHEIT);
@@ -133,6 +140,7 @@ test("displays a station selector", () => {
       actions={mockActions}
       Components={mockComponents}
       userPreferences={userPreferences}
+      navigateToStation={jest.fn()}
     />
   );
 
@@ -149,6 +157,7 @@ test("passes loading", () => {
       Components={mockComponents}
       userPreferences={userPreferences}
       loadingStations
+      navigateToStation={jest.fn()}
     />
   );
 
@@ -165,6 +174,7 @@ test("passes the current station", () => {
       Components={mockComponents}
       userPreferences={userPreferences}
       station={{ name: "Somewhere", id: "22" }}
+      navigateToStation={jest.fn()}
     />
   );
 
@@ -181,6 +191,7 @@ test("passes the stations list", () => {
       Components={mockComponents}
       userPreferences={userPreferences}
       stations={[{ name: "Elsewhere", id: "22" }]}
+      navigateToStation={jest.fn()}
     />
   );
 
@@ -193,18 +204,20 @@ test("may update the station", () => {
     mockComponents
   } = makeMockComponentsWithTriggers();
   const mockActions = makeMockActions();
+  const navigateToStation = jest.fn();
 
   render(
     <TheWaterTemp
       actions={mockActions}
       Components={mockComponents}
       userPreferences={userPreferences}
+      navigateToStation={navigateToStation}
     />
   );
   getStationChangeTrigger()({ name: "Elsewhere", id: "22" });
 
-  expect(mockActions.updateSelectedStation).toBeCalledTimes(1);
-  expect(mockActions.updateSelectedStation.mock.calls[0][0]).toStrictEqual({
+  expect(navigateToStation).toBeCalledTimes(1);
+  expect(navigateToStation.mock.calls[0][0]).toStrictEqual({
     name: "Elsewhere",
     id: "22"
   });
@@ -214,7 +227,6 @@ function makeMockActions() {
   return {
     loadUserPreferences: jest.fn(),
     updateUserPreferences: jest.fn(),
-    updateSelectedStation: jest.fn(),
     loadStations: jest.fn()
   };
 }
