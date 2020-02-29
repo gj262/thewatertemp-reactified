@@ -192,5 +192,5 @@ test("displays the latest temperature value", () => {
     latestTemperature: new Temperature(12.3456, TemperatureScale.FAHRENHEIT)
   });
 
-  expect(getByText("12.3")).not.toBeNull();
+  expect(getByText(/12.3/)).not.toBeNull();
 });
