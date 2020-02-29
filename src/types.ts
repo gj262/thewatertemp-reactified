@@ -24,6 +24,11 @@ interface _UserPreferences {
 
 export type UserPreferences = _UserPreferences | null;
 
+export interface APIFailure {
+  error: Error;
+  message: string;
+}
+
 export enum ActionTypes {
   USER_PREFERENCES_LOADED = "USER_PREFERENCES_LOADED",
   USER_PREFERENCES_UPDATED = "USER_PREFERENCES_UPDATED",
@@ -32,10 +37,37 @@ export enum ActionTypes {
   FAILED_TO_LOAD_STATIONS = "FAILED_TO_LOAD_STATIONS"
 }
 
-export interface Action {
-  type: ActionTypes;
-  payload?: any;
+export interface UserPreferencesLoadedAction {
+  type: ActionTypes.USER_PREFERENCES_LOADED;
+  payload: _UserPreferences;
 }
+
+export interface UserPreferencesUpdatedAction {
+  type: ActionTypes.USER_PREFERENCES_UPDATED;
+  payload: _UserPreferences;
+}
+
+export interface LoadingStationsAction {
+  type: ActionTypes.LOADING_STATIONS;
+}
+
+export interface StationsLoadedAction {
+  type: ActionTypes.STATIONS_LOADED;
+  payload: { stations: Station[] };
+}
+
+export interface FailedToLoadStationsAction {
+  type: ActionTypes.FAILED_TO_LOAD_STATIONS;
+  error: Error;
+  meta: { message: string };
+}
+
+export type Action =
+  | UserPreferencesLoadedAction
+  | UserPreferencesUpdatedAction
+  | LoadingStationsAction
+  | StationsLoadedAction
+  | FailedToLoadStationsAction;
 
 export interface LocalStorage {
   getItem: (name: string) => string | null;

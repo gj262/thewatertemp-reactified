@@ -1,11 +1,11 @@
 import reducer, { getUserPreferences } from "./userPreferences";
-import { ActionTypes, TemperatureScale } from "../types";
+import { ActionTypes, TemperatureScale, Action } from "../types";
 
 it("should return an initial state", () => {
   expect(getUserPreferences(null)).toBeNull();
 });
 
-const loaded = {
+const loaded: Action = {
   type: ActionTypes.USER_PREFERENCES_LOADED,
   payload: {
     temperatureScale: TemperatureScale.FAHRENHEIT
@@ -18,7 +18,7 @@ it("gets loaded", () => {
   );
 });
 
-const updated = {
+const updated: Action = {
   type: ActionTypes.USER_PREFERENCES_UPDATED,
   payload: {
     temperatureScale: TemperatureScale.CELSIUS

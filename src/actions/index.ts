@@ -1,6 +1,7 @@
 import { UserPreferences, LocalStorage, Station } from "../types";
 
 import * as forUserPreferences from "./userPreferences";
+import * as forStations from "./stations";
 import { Dispatch } from "redux";
 
 export default function makeActions(
@@ -19,7 +20,7 @@ export default function makeActions(
       localStorage
     ),
     updateSelectedStation: (station: Station) => {},
-    loadStations: () => {}
+    loadStations: forStations.loadStations.bind({}, dispatch)
   };
 }
 
