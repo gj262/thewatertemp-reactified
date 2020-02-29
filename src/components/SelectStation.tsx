@@ -61,6 +61,7 @@ class SelectStation extends React.Component<
           onKeyUp={this.onKeyUp}
           role="searchbox"
           aria-controls="station-list"
+          autoComplete="off"
         />
         {open && station && stations && (
           <StationList

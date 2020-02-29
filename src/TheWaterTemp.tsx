@@ -4,6 +4,7 @@ import { Dispatch } from "redux";
 import "./TheWaterTemp.css";
 import { RootState } from "./reducers";
 import * as fromUserPreferences from "./reducers/userPreferences";
+import * as fromStations from "./reducers/stations";
 import makeActions, { ActionTypes } from "./actions";
 import AllComponents, { ComponentTypes } from "./components";
 import { TemperatureScale, UserPreferences, Station } from "./types";
@@ -101,7 +102,12 @@ export const mapStateToProps = (state: RootState) => {
   return {
     userPreferences: fromUserPreferences.getUserPreferences(
       state.userPreferences
-    )
+    ),
+    loadingStations: fromStations.isLoading(state.stations),
+    stations: fromStations.getStations(state.stations),
+    loadingError: fromStations.loadFailed(state.stations)
+      ? fromStations.getFailure(state.stations)?.message
+      : null
   };
 };
 
