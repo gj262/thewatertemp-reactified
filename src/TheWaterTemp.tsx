@@ -63,11 +63,7 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
           station={station}
           stations={stations}
         />
-        {invalidStationId && (
-          <span className="loading-error">
-            This is not a valid station ID: {invalidStationId}
-          </span>
-        )}
+        <StationInfo invalidStationId={invalidStationId} station={station} />
       </div>
     );
   }
@@ -94,6 +90,32 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
     navigateToStation(station);
   };
 }
+
+interface StationInfoProps {
+  station?: Station;
+  invalidStationId?: string;
+}
+
+const StationInfo: React.FC<StationInfoProps> = ({
+  invalidStationId,
+  station
+}) => {
+  if (invalidStationId) {
+    return (
+      <span className="loading-error">
+        This is not a valid station ID: {invalidStationId}
+      </span>
+    );
+  }
+  return (
+    <a
+      href={station ? DEFAULTS.LINK_TO_STATION + station.id : "#"}
+      title="Go to this stations home page"
+    >
+      Station: {station ? station.id : "loading..."}
+    </a>
+  );
+};
 
 interface InjectComponentsAndActionsProps extends TheWaterTempProps {
   dispatch: Dispatch;

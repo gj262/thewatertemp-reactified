@@ -10,13 +10,20 @@
   margin: var(--app-spacing);
 }
 
-.the-water-temperature header {
+.the-water-temperature header,
+.the-water-temperature .select-station {
   margin-bottom: var(--app-spacing);
 }
 
-.the-water-temperature .select-station input {
+.the-water-temperature .select-station input,
+.the-water-temperature .select-station ul {
   width: 100%;
   box-sizing: border-box;
+}
+
+.the-water-temperature > a,
+.the-water-temperature > span {
+  padding-left: var(--label-padding);
 }
 
 .loading-error {

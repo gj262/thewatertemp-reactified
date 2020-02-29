@@ -223,6 +223,56 @@ test("may update the station", () => {
   });
 });
 
+test("should link to the station", () => {
+  const mockActions = makeMockActions();
+  const { mockComponents } = makeMockComponentsWithTriggers();
+
+  const { getByText } = render(
+    <TheWaterTemp
+      actions={mockActions}
+      Components={mockComponents}
+      userPreferences={userPreferences}
+      station={{ name: "Somewhere", id: "22" }}
+      navigateToStation={jest.fn()}
+    />
+  );
+
+  expect(getByText(/Station: 22/)).not.toBeNull();
+});
+
+test("might be an invalid station", () => {
+  const mockActions = makeMockActions();
+  const { mockComponents } = makeMockComponentsWithTriggers();
+
+  const { getByText } = render(
+    <TheWaterTemp
+      actions={mockActions}
+      Components={mockComponents}
+      userPreferences={userPreferences}
+      invalidStationId="22"
+      navigateToStation={jest.fn()}
+    />
+  );
+
+  expect(getByText(/This is not a valid station ID: 22/)).not.toBeNull();
+});
+
+test("might be loading the station", () => {
+  const mockActions = makeMockActions();
+  const { mockComponents } = makeMockComponentsWithTriggers();
+
+  const { getByText } = render(
+    <TheWaterTemp
+      actions={mockActions}
+      Components={mockComponents}
+      userPreferences={userPreferences}
+      navigateToStation={jest.fn()}
+    />
+  );
+
+  expect(getByText(/Station: loading.../)).not.toBeNull();
+});
+
 function makeMockActions() {
   return {
     loadUserPreferences: jest.fn(),
