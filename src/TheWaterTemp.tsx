@@ -7,20 +7,26 @@ import * as fromUserPreferences from "./reducers/userPreferences";
 import * as fromStations from "./reducers/stations";
 import makeActions, { ActionTypes } from "./actions";
 import AllComponents, { ComponentTypes } from "./components";
-import { TemperatureScale, UserPreferences, Station } from "./types";
+import {
+  TemperatureScale,
+  UserPreferences,
+  Station,
+  Temperature
+} from "./types";
 import { DEFAULTS } from "./defaults";
 import { Dispatch } from "redux";
 
-interface TheWaterTempProps {
+export interface TheWaterTempProps {
   actions: ActionTypes;
   Components: ComponentTypes;
   userPreferences: UserPreferences;
+  navigateToStation: (station: Station) => void;
   loadingStations?: boolean;
   station?: Station;
   stations?: Station[];
   loadingError?: string;
   invalidStationId?: string;
-  navigateToStation: (station: Station) => void;
+  latestTemperature?: Temperature;
 }
 
 export class TheWaterTemp extends React.Component<TheWaterTempProps> {
@@ -32,7 +38,8 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
       station,
       stations,
       loadingError,
-      invalidStationId
+      invalidStationId,
+      latestTemperature
     } = this.props;
 
     if (!userPreferences) {
@@ -65,6 +72,7 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
         />
         <StationInfo invalidStationId={invalidStationId} station={station} />
         <h2>Latest reading:</h2>
+        <Components.TemperatureValue temperature={latestTemperature} large />
       </div>
     );
   }

@@ -9,7 +9,11 @@ interface TemperatureValueProps {
   large?: boolean;
 }
 
-const TemperatureValue: React.FunctionComponent<TemperatureValueProps> = ({
+export type TemperatureValueComponentType = React.FunctionComponent<
+  TemperatureValueProps
+>;
+
+const TemperatureValue: TemperatureValueComponentType = ({
   temperature,
   caption,
   large
