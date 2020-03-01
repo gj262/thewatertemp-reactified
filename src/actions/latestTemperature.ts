@@ -1,19 +1,19 @@
 import { Dispatch } from "redux";
 import axios from "axios";
-import { Station, Temperature, ActionTypes, TemperatureScale } from "../types";
+import { Temperature, ActionTypes, TemperatureScale } from "../types";
 import { DEFAULTS } from "../defaults";
 
-export function loadLatestTemperature(dispatch: Dispatch, station: Station) {
+export function loadLatestTemperature(dispatch: Dispatch, stationId: string) {
   dispatch({
     type: ActionTypes.LOADING_LATEST_TEMPERATURE,
-    meta: { station }
+    meta: { stationId }
   });
 
   return axios
     .get(
       DEFAULTS.LATEST_TEMPERATURE_HOSTNAME +
         DEFAULTS.LATEST_TEMPERATURE_PATH +
-        station.id +
+        stationId +
         "&date=latest"
     )
     .then(response => {
@@ -23,32 +23,32 @@ export function loadLatestTemperature(dispatch: Dispatch, station: Station) {
         !Array.isArray(response.data.data) ||
         response.data.data.length === 0
       ) {
-        _dispatchLoadFailed(dispatch, station, "No data was returned");
+        _dispatchLoadFailed(dispatch, stationId, "No data was returned");
         return;
       }
 
       const data = _cleanData(response.data.data);
 
       if (data.length === 0) {
-        _dispatchLoadFailed(dispatch, station, "The data is unuseable");
+        _dispatchLoadFailed(dispatch, stationId, "The data is unuseable");
         return;
       }
 
       dispatch({
         type: ActionTypes.LATEST_TEMPERATURE_LOADED,
         payload: { temperature: data[0] },
-        meta: { station }
+        meta: { stationId }
       });
     })
     .catch(error => {
       console.log(error.toJSON());
-      _dispatchLoadFailed(dispatch, station, error.toJSON().message);
+      _dispatchLoadFailed(dispatch, stationId, error.toJSON().message);
     });
 }
 
 function _dispatchLoadFailed(
   dispatch: Dispatch,
-  station: Station,
+  stationId: string,
   message: string
 ) {
   dispatch({
@@ -56,7 +56,7 @@ function _dispatchLoadFailed(
     error: new Error("Cannot load the temperature data"),
     meta: {
       message,
-      station
+      stationId
     }
   });
 }

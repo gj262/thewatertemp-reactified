@@ -67,12 +67,32 @@ export interface FailedToLoadStationsAction {
   meta: { message: string };
 }
 
+export interface LoadingLatestTemperatureAction {
+  type: ActionTypes.LOADING_LATEST_TEMPERATURE;
+  meta: { stationId: string };
+}
+
+export interface LatestTemperatureLoadedAction {
+  type: ActionTypes.LATEST_TEMPERATURE_LOADED;
+  payload: { temperature: Temperature };
+  meta: { stationId: string };
+}
+
+export interface FailedToLoadLatestTemperatureAction {
+  type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE;
+  error: Error;
+  meta: { message: string; stationId: string };
+}
+
 export type Action =
   | UserPreferencesLoadedAction
   | UserPreferencesUpdatedAction
   | LoadingStationsAction
   | StationsLoadedAction
-  | FailedToLoadStationsAction;
+  | FailedToLoadStationsAction
+  | LoadingLatestTemperatureAction
+  | LatestTemperatureLoadedAction
+  | FailedToLoadLatestTemperatureAction;
 
 export interface LocalStorage {
   getItem: (name: string) => string | null;
