@@ -7,9 +7,11 @@ export interface Station {
 export class Temperature {
   value: number;
   scale: TemperatureScale;
-  constructor(value: number, scale: TemperatureScale) {
+  timestamp?: string;
+  constructor(value: number, scale: TemperatureScale, timestamp?: string) {
     this.value = value;
     this.scale = scale;
+    this.timestamp = timestamp;
   }
 }
 
@@ -34,7 +36,10 @@ export enum ActionTypes {
   USER_PREFERENCES_UPDATED = "USER_PREFERENCES_UPDATED",
   LOADING_STATIONS = "LOADING_STATIONS",
   STATIONS_LOADED = "STATIONS_LOADED",
-  FAILED_TO_LOAD_STATIONS = "FAILED_TO_LOAD_STATIONS"
+  FAILED_TO_LOAD_STATIONS = "FAILED_TO_LOAD_STATIONS",
+  LOADING_LATEST_TEMPERATURE = "LOADING_LATEST_TEMPERATURE",
+  LATEST_TEMPERATURE_LOADED = "LATEST_TEMPERATURE_LOADED",
+  FAILED_TO_LOAD_LATEST_TEMPERATURE = "FAILED_TO_LOAD_LATEST_TEMPERATURE"
 }
 
 export interface UserPreferencesLoadedAction {

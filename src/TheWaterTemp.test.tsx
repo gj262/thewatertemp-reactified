@@ -38,7 +38,8 @@ function makeMockActions() {
   return {
     loadUserPreferences: jest.fn(),
     updateUserPreferences: jest.fn(),
-    loadStations: jest.fn()
+    loadStations: jest.fn(),
+    loadLatestTemperature: jest.fn()
   };
 }
 

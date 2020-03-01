@@ -1,8 +1,8 @@
-import { UserPreferences, LocalStorage } from "../types";
-
+import { Dispatch } from "redux";
+import { UserPreferences, LocalStorage, Station } from "../types";
 import * as forUserPreferences from "./userPreferences";
 import * as forStations from "./stations";
-import { Dispatch } from "redux";
+import * as forLatestTemperature from "./latestTemperature";
 
 export default function makeActions(
   dispatch: Dispatch,
@@ -19,7 +19,11 @@ export default function makeActions(
       dispatch,
       localStorage
     ),
-    loadStations: forStations.loadStations.bind({}, dispatch)
+    loadStations: forStations.loadStations.bind({}, dispatch),
+    loadLatestTemperature: forLatestTemperature.loadLatestTemperature.bind(
+      {},
+      dispatch
+    )
   };
 }
 
@@ -27,4 +31,5 @@ export interface ActionTypes {
   loadUserPreferences: () => void;
   updateUserPreferences: (userPreferences: UserPreferences) => void;
   loadStations: () => Promise<void>;
+  loadLatestTemperature: (station: Station) => Promise<void>;
 }
