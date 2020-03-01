@@ -16,18 +16,9 @@ import {
 import { DEFAULTS } from "./defaults";
 import { Dispatch } from "redux";
 
-export interface TheWaterTempProps {
-  actions: ActionTypes;
-  Components: ComponentTypes;
-  userPreferences: UserPreferences;
-  navigateToStation: (station: Station) => void;
-  loadingStations?: boolean;
-  station?: Station;
-  stations?: Station[];
-  loadingError?: string;
-  invalidStationId?: string;
-  latestTemperature?: Temperature;
-}
+export type TheWaterTempProps = PropsFromDependencyInjection &
+  PropsFromStore &
+  PropsFromRouting;
 
 export class TheWaterTemp extends React.Component<TheWaterTempProps> {
   render() {
@@ -68,11 +59,14 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
           onChange={this.onStationChange}
           loading={!!loadingStations}
           station={station}
-          stations={stations}
+          stations={stations || undefined}
         />
         <StationInfo invalidStationId={invalidStationId} station={station} />
         <h2>Latest reading:</h2>
-        <Components.TemperatureValue temperature={latestTemperature} large />
+        <Components.TemperatureValue
+          temperature={latestTemperature || undefined}
+          large
+        />
       </div>
     );
   }
@@ -126,11 +120,10 @@ const StationInfo: React.FC<StationInfoProps> = ({
   );
 };
 
-interface InjectComponentsAndActionsProps extends TheWaterTempProps {
-  dispatch: Dispatch;
-}
+// Routing (stationId) -> Store (lots...) -> Dependencies -> App
 
-const InjectComponentsAndActions: React.FunctionComponent<InjectComponentsAndActionsProps> = props => (
+const InjectComponentsAndActions: React.FunctionComponent<PropsFromStore &
+  PropsFromRouting> = props => (
   <TheWaterTemp
     {...props}
     actions={makeActions(props.dispatch, window.localStorage)}
@@ -138,18 +131,25 @@ const InjectComponentsAndActions: React.FunctionComponent<InjectComponentsAndAct
   />
 );
 
-const WithRouting: React.FunctionComponent<any> = props => (
+interface PropsFromDependencyInjection {
+  actions: ActionTypes;
+  Components: ComponentTypes;
+}
+
+const WithRouting: React.FunctionComponent<PropsFromStore> = props => (
   <Router>
     <HandleRouting path="/" {...props} />
     <HandleRouting path="/stations/:stationId" {...props} />
   </Router>
 );
 
-interface HandleRoutingProps extends InjectComponentsAndActionsProps {
+interface PropsForRouting {
+  path: string;
   stationId?: string;
 }
 
-const HandleRouting: React.FunctionComponent<HandleRoutingProps> = props => {
+const HandleRouting: React.FunctionComponent<PropsForRouting &
+  PropsFromStore> = props => {
   let stationProps = {};
   const stationId = props.stationId || DEFAULTS.STATION_ID;
   if (props.stations) {
@@ -157,9 +157,9 @@ const HandleRouting: React.FunctionComponent<HandleRoutingProps> = props => {
       (station: Station) => station.id === stationId
     );
     if (station) {
-      stationProps = { station };
+      stationProps = { stationId, station };
     } else {
-      stationProps = { invalidStationId: stationId };
+      stationProps = { stationId, invalidStationId: stationId };
     }
   }
 
@@ -176,6 +176,13 @@ const HandleRouting: React.FunctionComponent<HandleRoutingProps> = props => {
   );
 };
 
+interface PropsFromRouting {
+  navigateToStation: (station: Station) => void;
+  stationId?: string;
+  station?: Station;
+  invalidStationId?: string;
+}
+
 const mapStateToProps = (state: RootState) => {
   return {
     userPreferences: fromUserPreferences.getUserPreferences(
@@ -183,11 +190,19 @@ const mapStateToProps = (state: RootState) => {
     ),
     loadingStations: fromStations.isLoading(state.stations),
     stations: fromStations.getStations(state.stations),
-    loadingError: fromStations.loadFailed(state.stations)
-      ? fromStations.getFailure(state.stations)?.message
-      : null
+    loadingError: fromStations.getFailureMessage(state.stations),
+    latestTemperature: null
   };
 };
+
+interface PropsFromStore {
+  dispatch: Dispatch;
+  userPreferences: UserPreferences;
+  loadingStations: boolean;
+  stations: Station[] | null;
+  loadingError: string | null;
+  latestTemperature: Temperature | null;
+}
 
 const InjectStoreData = connect(mapStateToProps)(WithRouting);
 

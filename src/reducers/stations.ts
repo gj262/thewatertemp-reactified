@@ -36,10 +36,8 @@ export function loadFailed(state: StationsState): boolean {
   return !!(state && state.failure);
 }
 
-export function getFailure(
-  state: StationsState
-): { error: Error; message: string } | null {
-  return state && state.failure ? state.failure : null;
+export function getFailureMessage(state: StationsState): string | null {
+  return state && state.failure ? state.failure.message : null;
 }
 
 export default stations;

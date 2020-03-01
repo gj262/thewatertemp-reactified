@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { UserPreferences, LocalStorage, Station } from "../types";
+import { UserPreferences, LocalStorage } from "../types";
 import * as forUserPreferences from "./userPreferences";
 import * as forStations from "./stations";
 import * as forLatestTemperature from "./latestTemperature";
@@ -31,5 +31,5 @@ export interface ActionTypes {
   loadUserPreferences: () => void;
   updateUserPreferences: (userPreferences: UserPreferences) => void;
   loadStations: () => Promise<void>;
-  loadLatestTemperature: (station: Station) => Promise<void>;
+  loadLatestTemperature: (stationId: string) => Promise<void>;
 }

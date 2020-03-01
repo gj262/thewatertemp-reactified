@@ -18,9 +18,15 @@ function commonAppTest(overrideProps: Partial<TheWaterTempProps>) {
   const renderProps = render(
     <TheWaterTemp
       actions={mockActions}
+      dispatch={jest.fn()}
       Components={mockComponents}
       userPreferences={userPreferences}
       navigateToStation={jest.fn()}
+      stationId="22"
+      loadingStations={false}
+      stations={null}
+      loadingError={null}
+      latestTemperature={null}
       {...overrideProps}
     />
   );
@@ -194,4 +200,16 @@ test("displays the latest temperature value", () => {
   });
 
   expect(getByText(/12.3/)).not.toBeNull();
+});
+
+test("does not load the latest temp when station is unknown", () => {
+  const { mockActions } = commonAppTest({});
+
+  expect(mockActions.loadLatestTemperature).toBeCalledTimes(0);
+});
+
+test("loads the latest temp when station is known", () => {
+  const { mockActions } = commonAppTest({ stationId: "22" });
+
+  expect(mockActions.loadLatestTemperature).toBeCalledTimes(1);
 });

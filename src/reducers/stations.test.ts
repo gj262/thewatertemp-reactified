@@ -2,7 +2,7 @@ import reducer, {
   getStations,
   isLoading,
   loadFailed,
-  getFailure
+  getFailureMessage
 } from "./stations";
 import { Action, ActionTypes } from "../types";
 
@@ -53,8 +53,7 @@ it("may fail to load", () => {
 });
 
 it("provides the failure", () => {
-  expect(getFailure(reducer(reducer(null, loading), failure))).toStrictEqual({
-    error: failure.error,
-    message: failure.meta.message
-  });
+  expect(getFailureMessage(reducer(reducer(null, loading), failure))).toBe(
+    failure.meta.message
+  );
 });

@@ -61,13 +61,17 @@ export function loadFailed(
   return !!(stationId in state && state[stationId].failure);
 }
 
-export function getFailure(
+export function getFailureMessage(
   state: LatestTemperatureState,
   stationId: string
-): { error: Error; message: string } | null | undefined {
-  return stationId in state && state[stationId].failure
-    ? state[stationId].failure
-    : null;
+): string | null {
+  if (stationId in state) {
+    const thisStationState = state[stationId];
+    if (thisStationState && thisStationState.failure) {
+      return thisStationState.failure.message;
+    }
+  }
+  return null;
 }
 
 export default latestTemperature;

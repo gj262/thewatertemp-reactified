@@ -2,7 +2,7 @@ import reducer, {
   getLatestTemperature,
   isLoading,
   loadFailed,
-  getFailure
+  getFailureMessage
 } from "./latestTemperature";
 import { Action, ActionTypes, Temperature, TemperatureScale } from "../types";
 
@@ -57,10 +57,7 @@ it("may fail to load", () => {
 });
 
 it("provides the failure", () => {
-  expect(
-    getFailure(reducer(reducer({}, loading), failure), "22")
-  ).toStrictEqual({
-    error: failure.error,
-    message: failure.meta.message
-  });
+  expect(getFailureMessage(reducer(reducer({}, loading), failure), "22")).toBe(
+    failure.meta.message
+  );
 });
