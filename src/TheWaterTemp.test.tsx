@@ -29,7 +29,7 @@ function commonAppTest(overrideProps: Partial<TheWaterTempProps>) {
       stationId="22"
       loadingStations={false}
       stations={null}
-      loadingError={null}
+      errorLoadingStations={null}
       latestTemperature={null}
       path=""
       {...overrideProps}
@@ -111,7 +111,7 @@ test("displays no header until the user preferences arrive", () => {
 
 test("may display a loading error", () => {
   const { queryByText } = commonAppTest({
-    loadingError: "Cannot load the stations: blah"
+    errorLoadingStations: "Cannot load the stations: blah"
   });
 
   expect(queryByText("Cannot load the stations: blah")).not.toBeNull();
@@ -229,7 +229,7 @@ test("loads the latest temp for a new station", async () => {
       stationId="33"
       loadingStations={false}
       stations={null}
-      loadingError={null}
+      errorLoadingStations={null}
       latestTemperature={new Temperature(76.1, TemperatureScale.FAHRENHEIT)}
       path=""
     />
@@ -239,3 +239,7 @@ test("loads the latest temp for a new station", async () => {
 
   expect(mockActions.loadLatestTemperature).toBeCalledTimes(2);
 });
+
+// errorLoadingStations -> errorLoadingStations
+// refreshes
+// latestTemperatureerrorLoadingStations

@@ -8,9 +8,13 @@ export default {
 
 export const app = () => (
   <TheWaterTemp
-    actions={{ loadUserPreferences: () => null, loadStations: () => null }}
+    actions={{
+      loadUserPreferences: () => null,
+      loadStations: () => null,
+      loadLatestTemperature: stationId => null
+    }}
     Components={{}}
     userPreferences={{}}
-    loadingError="Cannot load the stations: blah"
+    errorLoadingStations="Cannot load the stations: blah"
   />
 );

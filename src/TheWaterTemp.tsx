@@ -28,7 +28,7 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
       userPreferences,
       loadingStations,
       stations,
-      loadingError,
+      errorLoadingStations,
       station,
       invalidStationId,
       latestTemperature
@@ -38,11 +38,11 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
       return null;
     }
 
-    if (loadingError) {
+    if (errorLoadingStations) {
       return (
         <div className="wrap">
           <div className="the-water-temperature">
-            <span className="loading-error">{loadingError}</span>
+            <span className="loading-error">{errorLoadingStations}</span>
           </div>
         </div>
       );
@@ -191,7 +191,7 @@ const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {
     ),
     loadingStations: fromStations.isLoading(state.stations),
     stations: fromStations.getStations(state.stations),
-    loadingError: fromStations.getFailureMessage(state.stations),
+    errorLoadingStations: fromStations.getFailureMessage(state.stations),
     ...stationProps,
     latestTemperature: fromLatestTemperature.getLatestTemperature(
       state.latestTemperature,
@@ -209,7 +209,7 @@ interface PropsFromStore {
   userPreferences: UserPreferences;
   loadingStations: boolean;
   stations: Station[] | null;
-  loadingError: string | null;
+  errorLoadingStations: string | null;
   stationId: string;
   station?: Station;
   invalidStationId?: string;
