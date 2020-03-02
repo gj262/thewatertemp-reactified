@@ -1,9 +1,13 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, wait } from "@testing-library/react";
 
 import { TheWaterTemp, TheWaterTempProps } from "./TheWaterTemp";
 import { ComponentTypes } from "./components";
 import { Temperature, TemperatureScale, Station } from "./types";
+
+const userPreferences = {
+  temperatureScale: TemperatureScale.CELSIUS
+};
 
 function commonAppTest(overrideProps: Partial<TheWaterTempProps>) {
   const mockActions = makeMockActions();
@@ -27,6 +31,7 @@ function commonAppTest(overrideProps: Partial<TheWaterTempProps>) {
       stations={null}
       loadingError={null}
       latestTemperature={null}
+      path=""
       {...overrideProps}
     />
   );
@@ -202,14 +207,35 @@ test("displays the latest temperature value", () => {
   expect(getByText(/12.3/)).not.toBeNull();
 });
 
-test("does not load the latest temp when station is unknown", () => {
-  const { mockActions } = commonAppTest({});
-
-  expect(mockActions.loadLatestTemperature).toBeCalledTimes(0);
-});
-
-test("loads the latest temp when station is known", () => {
+test("loads the latest temp", () => {
   const { mockActions } = commonAppTest({ stationId: "22" });
 
   expect(mockActions.loadLatestTemperature).toBeCalledTimes(1);
+});
+
+test("loads the latest temp for a new station", async () => {
+  let { mockActions, mockComponents, rerender, getByText } = commonAppTest({
+    stationId: "22",
+    latestTemperature: new Temperature(12.3456, TemperatureScale.FAHRENHEIT)
+  });
+
+  rerender(
+    <TheWaterTemp
+      actions={mockActions}
+      dispatch={jest.fn()}
+      Components={mockComponents}
+      userPreferences={userPreferences}
+      navigateToStation={jest.fn()}
+      stationId="33"
+      loadingStations={false}
+      stations={null}
+      loadingError={null}
+      latestTemperature={new Temperature(76.1, TemperatureScale.FAHRENHEIT)}
+      path=""
+    />
+  );
+
+  await wait(() => getByText(/76.1/));
+
+  expect(mockActions.loadLatestTemperature).toBeCalledTimes(2);
 });

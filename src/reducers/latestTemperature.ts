@@ -41,10 +41,14 @@ function latestTemperature(
 export function getLatestTemperature(
   state: LatestTemperatureState,
   stationId: string
-): Temperature | null | undefined {
-  return stationId in state && state[stationId].temperature
-    ? state[stationId].temperature
-    : null;
+): Temperature | null {
+  if (stationId in state) {
+    const thisStationState = state[stationId];
+    if (thisStationState && thisStationState.temperature) {
+      return thisStationState.temperature;
+    }
+  }
+  return null;
 }
 
 export function isLoading(

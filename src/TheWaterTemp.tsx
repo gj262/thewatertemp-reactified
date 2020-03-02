@@ -5,6 +5,7 @@ import "./TheWaterTemp.css";
 import { RootState } from "./reducers";
 import * as fromUserPreferences from "./reducers/userPreferences";
 import * as fromStations from "./reducers/stations";
+import * as fromLatestTemperature from "./reducers/latestTemperature";
 import makeActions, { ActionTypes } from "./actions";
 import AllComponents, { ComponentTypes } from "./components";
 import {
@@ -26,9 +27,9 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
       Components,
       userPreferences,
       loadingStations,
-      station,
       stations,
       loadingError,
+      station,
       invalidStationId,
       latestTemperature
     } = this.props;
@@ -72,10 +73,11 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
   }
 
   componentDidMount() {
-    const { actions } = this.props;
+    const { actions, stationId } = this.props;
 
     actions.loadUserPreferences();
     actions.loadStations();
+    actions.loadLatestTemperature(stationId);
   }
 
   onTemperatureScaleChange = (scale: TemperatureScale) => {
@@ -92,6 +94,14 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
 
     navigateToStation(station);
   };
+
+  componentDidUpdate(prevProps: TheWaterTempProps) {
+    const { actions, stationId } = this.props;
+
+    if (stationId !== prevProps.stationId) {
+      actions.loadLatestTemperature(stationId);
+    }
+  }
 }
 
 interface StationInfoProps {
@@ -120,40 +130,46 @@ const StationInfo: React.FC<StationInfoProps> = ({
   );
 };
 
-// Routing (stationId) -> Store (lots...) -> Dependencies -> App
+// Routing (stationId) -> Store (lots...) -> Dependency Injection -> App
+
+const WithRouting: React.FunctionComponent = props => (
+  <Router>
+    <InjectStoreData path="/" {...props} />
+    <InjectStoreData path="/stations/:stationId" {...props} />
+  </Router>
+);
+
+interface PropsFromRouting {
+  path: string;
+  stationId?: string;
+}
 
 const InjectComponentsAndActions: React.FunctionComponent<PropsFromStore &
   PropsFromRouting> = props => (
   <TheWaterTemp
     {...props}
     actions={makeActions(props.dispatch, window.localStorage)}
+    navigateToStation={(station: Station) =>
+      navigate(`/stations/${station.id}`)
+    }
     Components={AllComponents}
   />
 );
 
 interface PropsFromDependencyInjection {
   actions: ActionTypes;
+  navigateToStation: (station: Station) => void;
   Components: ComponentTypes;
 }
 
-const WithRouting: React.FunctionComponent<PropsFromStore> = props => (
-  <Router>
-    <HandleRouting path="/" {...props} />
-    <HandleRouting path="/stations/:stationId" {...props} />
-  </Router>
-);
+const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {
+  const stations = fromStations.getStations(state.stations);
 
-interface PropsForRouting {
-  path: string;
-  stationId?: string;
-}
+  const stationId = ownProps.stationId || DEFAULTS.STATION_ID;
+  let stationProps;
 
-const HandleRouting: React.FunctionComponent<PropsForRouting &
-  PropsFromStore> = props => {
-  let stationProps = {};
-  const stationId = props.stationId || DEFAULTS.STATION_ID;
-  if (props.stations) {
-    const station = props.stations.find(
+  if (stations) {
+    const station = stations.find(
       (station: Station) => station.id === stationId
     );
     if (station) {
@@ -161,29 +177,10 @@ const HandleRouting: React.FunctionComponent<PropsForRouting &
     } else {
       stationProps = { stationId, invalidStationId: stationId };
     }
+  } else {
+    stationProps = { stationId };
   }
 
-  return (
-    <div className="wrap">
-      <InjectComponentsAndActions
-        {...props}
-        {...stationProps}
-        navigateToStation={(station: Station) =>
-          navigate(`/stations/${station.id}`)
-        }
-      />
-    </div>
-  );
-};
-
-interface PropsFromRouting {
-  navigateToStation: (station: Station) => void;
-  stationId?: string;
-  station?: Station;
-  invalidStationId?: string;
-}
-
-const mapStateToProps = (state: RootState) => {
   return {
     userPreferences: fromUserPreferences.getUserPreferences(
       state.userPreferences
@@ -191,9 +188,17 @@ const mapStateToProps = (state: RootState) => {
     loadingStations: fromStations.isLoading(state.stations),
     stations: fromStations.getStations(state.stations),
     loadingError: fromStations.getFailureMessage(state.stations),
-    latestTemperature: null
+    ...stationProps,
+    latestTemperature: fromLatestTemperature.getLatestTemperature(
+      state.latestTemperature,
+      stationId
+    )
   };
 };
+
+const InjectStoreData: React.FunctionComponent<PropsFromRouting> = connect(
+  mapStateToProps
+)(InjectComponentsAndActions);
 
 interface PropsFromStore {
   dispatch: Dispatch;
@@ -201,9 +206,10 @@ interface PropsFromStore {
   loadingStations: boolean;
   stations: Station[] | null;
   loadingError: string | null;
+  stationId: string;
+  station?: Station;
+  invalidStationId?: string;
   latestTemperature: Temperature | null;
 }
 
-const InjectStoreData = connect(mapStateToProps)(WithRouting);
-
-export default InjectStoreData;
+export default WithRouting;
