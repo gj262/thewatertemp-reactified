@@ -40,34 +40,38 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
 
     if (loadingError) {
       return (
-        <div className="the-water-temperature">
-          <span className="loading-error">{loadingError}</span>
+        <div className="wrap">
+          <div className="the-water-temperature">
+            <span className="loading-error">{loadingError}</span>
+          </div>
         </div>
       );
     }
 
     return (
-      <div className="the-water-temperature">
-        <Components.Header
-          right={
-            <Components.TemperatureScaleSelector
-              scale={userPreferences.temperatureScale}
-              onChange={this.onTemperatureScaleChange}
-            />
-          }
-        />
-        <Components.SelectStation
-          onChange={this.onStationChange}
-          loading={!!loadingStations}
-          station={station}
-          stations={stations || undefined}
-        />
-        <StationInfo invalidStationId={invalidStationId} station={station} />
-        <h2>Latest reading:</h2>
-        <Components.TemperatureValue
-          temperature={latestTemperature || undefined}
-          large
-        />
+      <div className="wrap">
+        <div className="the-water-temperature">
+          <Components.Header
+            right={
+              <Components.TemperatureScaleSelector
+                scale={userPreferences.temperatureScale}
+                onChange={this.onTemperatureScaleChange}
+              />
+            }
+          />
+          <Components.SelectStation
+            onChange={this.onStationChange}
+            loading={!!loadingStations}
+            station={station}
+            stations={stations || undefined}
+          />
+          <StationInfo invalidStationId={invalidStationId} station={station} />
+          <h2>Latest reading:</h2>
+          <Components.TemperatureValue
+            temperature={latestTemperature || undefined}
+            large
+          />
+        </div>
       </div>
     );
   }
