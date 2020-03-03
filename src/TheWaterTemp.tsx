@@ -212,18 +212,28 @@ const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {
     stationProps = { stationId };
   }
 
+  const userPreferences = fromUserPreferences.getUserPreferences(
+    state.userPreferences
+  );
+
+  let latestTemperature = fromLatestTemperature.getLatestTemperature(
+    state.latestTemperature,
+    stationId
+  );
+
+  if (userPreferences && latestTemperature) {
+    latestTemperature = latestTemperature.usingScale(
+      userPreferences.temperatureScale
+    );
+  }
+
   return {
-    userPreferences: fromUserPreferences.getUserPreferences(
-      state.userPreferences
-    ),
+    userPreferences,
     loadingStations: fromStations.isLoading(state.stations),
     stations: fromStations.getStations(state.stations),
     errorLoadingStations: fromStations.getFailureMessage(state.stations),
     ...stationProps,
-    latestTemperature: fromLatestTemperature.getLatestTemperature(
-      state.latestTemperature,
-      stationId
-    ),
+    latestTemperature,
     errorLoadingLatestTemperature: fromLatestTemperature.getFailureMessage(
       state.latestTemperature,
       stationId

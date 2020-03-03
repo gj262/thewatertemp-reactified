@@ -1,3 +1,8 @@
+export enum TemperatureScale {
+  FAHRENHEIT = "FAHRENHEIT",
+  CELSIUS = "CELSIUS"
+}
+
 export interface Station {
   id: string;
   name: string;
@@ -13,11 +18,33 @@ export class Temperature {
     this.scale = scale;
     this.timestamp = timestamp;
   }
-}
 
-export enum TemperatureScale {
-  FAHRENHEIT = "FAHRENHEIT",
-  CELSIUS = "CELSIUS"
+  usingScale(scale: TemperatureScale): Temperature {
+    if (this.scale === scale) {
+      return this;
+    }
+    if (
+      this.scale === TemperatureScale.CELSIUS &&
+      scale === TemperatureScale.FAHRENHEIT
+    ) {
+      return new Temperature(
+        this.value * 1.8 + 32,
+        TemperatureScale.FAHRENHEIT,
+        this.timestamp
+      );
+    } else if (
+      this.scale === TemperatureScale.FAHRENHEIT &&
+      scale === TemperatureScale.CELSIUS
+    ) {
+      return new Temperature(
+        (this.value - 32) / 1.8,
+        TemperatureScale.CELSIUS,
+        this.timestamp
+      );
+    }
+
+    throw new Error("Unhandled temp conversion");
+  }
 }
 
 interface _UserPreferences {
