@@ -1,9 +1,9 @@
-import { Action, ActionTypes, APIFailure, Temperature } from "../types";
+import { Action, ActionTypes, Temperature } from "../types";
 
 interface _PerStationLatestTemperatureState {
   isLoading: boolean;
   temperature?: Temperature;
-  failure?: APIFailure;
+  failure?: Error;
 }
 
 export interface LatestTemperatureState {
@@ -30,7 +30,7 @@ function latestTemperature(
         ...state,
         [action.meta.stationId]: {
           isLoading: false,
-          failure: { error: action.error, message: action.meta.message }
+          failure: action.error
         }
       };
     default:

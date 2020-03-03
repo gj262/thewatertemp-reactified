@@ -40,10 +40,9 @@ it("is no longer loading", () => {
 
 const failure: Action = {
   type: ActionTypes.FAILED_TO_LOAD_STATIONS,
-  error: new Error("Cannot load the stations list"),
-  meta: {
-    message: "Request failed with status code 500"
-  }
+  error: new Error(
+    "Cannot load the stations list. Request failed with status code 500"
+  )
 };
 
 it("may fail to load", () => {
@@ -54,6 +53,6 @@ it("may fail to load", () => {
 
 it("provides the failure", () => {
   expect(getFailureMessage(reducer(reducer(null, loading), failure))).toBe(
-    failure.meta.message
+    failure.error.message
   );
 });

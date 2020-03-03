@@ -17,6 +17,11 @@ export function loadLatestTemperature(dispatch: Dispatch, stationId: string) {
         "&date=latest"
     )
     .then(response => {
+      if (response.data && response.data.error && response.data.error.message) {
+        _dispatchLoadFailed(dispatch, stationId, response.data.error.message);
+        return;
+      }
+
       if (
         !response.data ||
         !response.data.data ||
@@ -53,9 +58,8 @@ function _dispatchLoadFailed(
 ) {
   dispatch({
     type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
-    error: new Error("Cannot load the temperature data"),
+    error: new Error("Cannot load the temperature data. " + message),
     meta: {
-      message,
       stationId
     }
   });

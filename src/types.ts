@@ -26,11 +26,6 @@ interface _UserPreferences {
 
 export type UserPreferences = _UserPreferences | null;
 
-export interface APIFailure {
-  error: Error;
-  message: string;
-}
-
 export enum ActionTypes {
   USER_PREFERENCES_LOADED = "USER_PREFERENCES_LOADED",
   USER_PREFERENCES_UPDATED = "USER_PREFERENCES_UPDATED",
@@ -64,7 +59,6 @@ export interface StationsLoadedAction {
 export interface FailedToLoadStationsAction {
   type: ActionTypes.FAILED_TO_LOAD_STATIONS;
   error: Error;
-  meta: { message: string };
 }
 
 export interface LoadingLatestTemperatureAction {
@@ -81,7 +75,7 @@ export interface LatestTemperatureLoadedAction {
 export interface FailedToLoadLatestTemperatureAction {
   type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE;
   error: Error;
-  meta: { message: string; stationId: string };
+  meta: { stationId: string };
 }
 
 export type Action =

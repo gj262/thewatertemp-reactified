@@ -74,8 +74,10 @@ it("dispatches an error for non 2xx", async () => {
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
-    error: new Error("Cannot load the temperature data"),
-    meta: { message: "Request failed with status code 404", stationId }
+    error: new Error(
+      "Cannot load the temperature data. Request failed with status code 404"
+    ),
+    meta: { stationId }
   });
 });
 
@@ -91,8 +93,31 @@ it("dispatches an error for bad data", async () => {
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
-    error: new Error("Cannot load the temperature data"),
-    meta: { message: "No data was returned", stationId }
+    error: new Error("Cannot load the temperature data. No data was returned"),
+    meta: { stationId }
+  });
+});
+
+it("dispatches an error for an error response", async () => {
+  const dispatch = jest.fn();
+  console.log = jest.fn();
+  nock(DEFAULTS.LATEST_TEMPERATURE_HOSTNAME)
+    .get(DEFAULTS.LATEST_TEMPERATURE_PATH + stationId + "&date=latest")
+    .reply(200, {
+      error: {
+        message: "No data was found. This product ..."
+      }
+    });
+
+  await loadLatestTemperature(dispatch, stationId);
+
+  expect(dispatch).toBeCalledTimes(2);
+  expect(dispatch.mock.calls[1][0]).toStrictEqual({
+    type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
+    error: new Error(
+      "Cannot load the temperature data. No data was found. This product ..."
+    ),
+    meta: { stationId }
   });
 });
 
@@ -120,8 +145,8 @@ it("must have a non zero 'v'", async () => {
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
-    error: new Error("Cannot load the temperature data"),
-    meta: { message: "The data is unuseable", stationId }
+    error: new Error("Cannot load the temperature data. The data is unuseable"),
+    meta: { stationId }
   });
 });
 
@@ -139,8 +164,8 @@ it("must have a 'v'", async () => {
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
-    error: new Error("Cannot load the temperature data"),
-    meta: { message: "The data is unuseable", stationId }
+    error: new Error("Cannot load the temperature data. The data is unuseable"),
+    meta: { stationId }
   });
 });
 
@@ -158,7 +183,7 @@ it("must have a 'v=t'", async () => {
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
-    error: new Error("Cannot load the temperature data"),
-    meta: { message: "The data is unuseable", stationId }
+    error: new Error("Cannot load the temperature data. The data is unuseable"),
+    meta: { stationId }
   });
 });

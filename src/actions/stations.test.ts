@@ -67,10 +67,9 @@ it("dispatches an error for non 2xx", async () => {
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.FAILED_TO_LOAD_STATIONS,
-    error: new Error("Cannot load the stations list"),
-    meta: {
-      message: "Request failed with status code 500"
-    }
+    error: new Error(
+      "Cannot load the stations list. Request failed with status code 500"
+    )
   });
 });
 
@@ -86,10 +85,27 @@ it("dispatches an error for no stations", async () => {
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.FAILED_TO_LOAD_STATIONS,
-    error: new Error("Cannot load the stations list"),
-    meta: {
-      message: "No stations were returned"
-    }
+    error: new Error("Cannot load the stations list. No stations were returned")
+  });
+});
+
+it("dispatches an error for an error response", async () => {
+  const dispatch = jest.fn();
+  console.log = jest.fn();
+  nock(DEFAULTS.STATION_LIST_HOSTNAME)
+    .get(DEFAULTS.STATION_LIST_PATH)
+    .reply(200, {
+      error: {
+        message: "Go away ..."
+      }
+    });
+
+  await loadStations(dispatch);
+
+  expect(dispatch).toBeCalledTimes(2);
+  expect(dispatch.mock.calls[1][0]).toStrictEqual({
+    type: ActionTypes.FAILED_TO_LOAD_STATIONS,
+    error: new Error("Cannot load the stations list. Go away ...")
   });
 });
 

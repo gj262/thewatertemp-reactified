@@ -1,9 +1,9 @@
-import { Action, ActionTypes, Station, APIFailure } from "../types";
+import { Action, ActionTypes, Station } from "../types";
 
 interface _StationsState {
   isLoading: boolean;
   stations?: Station[];
-  failure?: APIFailure;
+  failure?: Error;
 }
 
 export type StationsState = _StationsState | null;
@@ -17,7 +17,7 @@ function stations(state: StationsState = null, action: Action): StationsState {
     case ActionTypes.FAILED_TO_LOAD_STATIONS:
       return {
         isLoading: false,
-        failure: { error: action.error, message: action.meta.message }
+        failure: action.error
       };
     default:
       return state;

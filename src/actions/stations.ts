@@ -11,6 +11,11 @@ export function loadStations(dispatch: Dispatch) {
   return axios
     .get(DEFAULTS.STATION_LIST_HOSTNAME + DEFAULTS.STATION_LIST_PATH)
     .then(response => {
+      if (response.data && response.data.error && response.data.error.message) {
+        _dispatchLoadFailed(dispatch, response.data.error.message);
+        return;
+      }
+
       if (
         !response.data ||
         !response.data.stations ||
@@ -37,10 +42,9 @@ export function loadStations(dispatch: Dispatch) {
       console.log(error.toJSON());
       dispatch({
         type: ActionTypes.FAILED_TO_LOAD_STATIONS,
-        error: new Error("Cannot load the stations list"),
-        meta: {
-          message: error.toJSON().message
-        }
+        error: new Error(
+          "Cannot load the stations list. " + error.toJSON().message
+        )
       });
     });
 }
@@ -48,10 +52,7 @@ export function loadStations(dispatch: Dispatch) {
 function _dispatchLoadFailed(dispatch: Dispatch, message: string) {
   dispatch({
     type: ActionTypes.FAILED_TO_LOAD_STATIONS,
-    error: new Error("Cannot load the stations list"),
-    meta: {
-      message
-    }
+    error: new Error("Cannot load the stations list. " + message)
   });
 }
 

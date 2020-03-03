@@ -43,9 +43,10 @@ it("is no longer loading", () => {
 
 const failure: Action = {
   type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
-  error: new Error("Cannot load the latest temperature"),
+  error: new Error(
+    "Cannot load the latest temperature. Request failed with status code 500"
+  ),
   meta: {
-    message: "Request failed with status code 500",
     stationId: "22"
   }
 };
@@ -58,6 +59,6 @@ it("may fail to load", () => {
 
 it("provides the failure", () => {
   expect(getFailureMessage(reducer(reducer({}, loading), failure), "22")).toBe(
-    failure.meta.message
+    failure.error.message
   );
 });
