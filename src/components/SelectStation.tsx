@@ -155,6 +155,29 @@ class SelectStation extends React.Component<
       this.inputRef.current.value = station.name;
     }
   }
+
+  componentDidUpdate(prevProps: SelectStationProps) {
+    const { station } = this.props;
+
+    if (
+      (!prevProps.station && station) ||
+      (prevProps.station && station && prevProps.station.id !== station.id)
+    ) {
+      this.handleFoistedChange(station);
+    }
+  }
+
+  handleFoistedChange(station: Station) {
+    if (station.name !== this.state.inputValue) {
+      this.setState({
+        inputValue: station.name
+      });
+    }
+
+    if (this.inputRef.current && this.inputRef.current.value !== station.name) {
+      this.inputRef.current.value = station.name;
+    }
+  }
 }
 
 export default SelectStation;

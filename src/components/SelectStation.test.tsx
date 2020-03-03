@@ -33,6 +33,23 @@ test("shows a station name", () => {
   expect(queryByText(/Elsewhere/i)).toBeNull();
 });
 
+test("changing the station changes the display", () => {
+  const { queryByDisplayValue, queryByText, rerender } = render(
+    <SelectStation
+      station={{ name: "Somewhere", id: "22" }}
+      onChange={() => null}
+    />
+  );
+  rerender(
+    <SelectStation
+      station={{ name: "Elsewhere", id: "33" }}
+      onChange={() => null}
+    />
+  );
+  expect(queryByDisplayValue(/Elsewhere/i)).not.toBeNull();
+  expect(queryByText(/Somewhere/i)).toBeNull();
+});
+
 test("focus selects the station name text", () => {
   const { getByDisplayValue } = render(
     <SelectStation
