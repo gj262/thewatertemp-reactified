@@ -62,3 +62,12 @@ it("provides the failure", () => {
     failure.error.message
   );
 });
+
+it("refresh is not loading", () => {
+  const refreshing = reducer(reducer(reducer({}, loading), loads), loading);
+
+  expect(getLatestTemperature(refreshing, "22")).toStrictEqual(
+    loads.payload.temperature
+  );
+  expect(isLoading(refreshing, "22")).toBe(false);
+});

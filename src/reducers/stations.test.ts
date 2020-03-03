@@ -56,3 +56,10 @@ it("provides the failure", () => {
     failure.error.message
   );
 });
+
+it("refresh is not loading", () => {
+  const refreshing = reducer(reducer(reducer(null, loading), loads), loading);
+
+  expect(getStations(refreshing)).toStrictEqual(loads.payload.stations);
+  expect(isLoading(refreshing)).toBe(false);
+});

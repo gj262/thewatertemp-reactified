@@ -11,7 +11,7 @@ export type StationsState = _StationsState | null;
 function stations(state: StationsState = null, action: Action): StationsState {
   switch (action.type) {
     case ActionTypes.LOADING_STATIONS:
-      return { isLoading: true };
+      return state && state.stations ? state : { isLoading: true };
     case ActionTypes.STATIONS_LOADED:
       return { isLoading: false, stations: action.payload.stations };
     case ActionTypes.FAILED_TO_LOAD_STATIONS:

@@ -16,7 +16,14 @@ function latestTemperature(
 ): LatestTemperatureState {
   switch (action.type) {
     case ActionTypes.LOADING_LATEST_TEMPERATURE:
-      return { ...state, [action.meta.stationId]: { isLoading: true } };
+      const currentState = state[action.meta.stationId];
+      return {
+        ...state,
+        [action.meta.stationId]:
+          currentState && currentState.temperature
+            ? currentState
+            : { isLoading: true }
+      };
     case ActionTypes.LATEST_TEMPERATURE_LOADED:
       return {
         ...state,

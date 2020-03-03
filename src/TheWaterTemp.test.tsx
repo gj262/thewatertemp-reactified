@@ -276,6 +276,3 @@ test("may display loading for the latest temperature", () => {
 
   expect(getByText(/loading.../)).not.toBeNull();
 });
-
-// errorLoadingLatestTemperature
-// refreshes
