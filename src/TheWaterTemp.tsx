@@ -84,10 +84,12 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
   }
 
   componentDidMount() {
-    const { actions, stationId } = this.props;
+    const { actions, stationId, stations } = this.props;
 
     actions.loadUserPreferences();
-    actions.loadStations();
+    if (!stations) {
+      actions.loadStations();
+    }
     actions.loadLatestTemperature(stationId);
   }
 
