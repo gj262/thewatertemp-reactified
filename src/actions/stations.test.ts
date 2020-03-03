@@ -129,7 +129,7 @@ it("must have id and name / keeps 'state' / drops other fields", async () => {
     type: ActionTypes.STATIONS_LOADED,
     payload: {
       stations: [
-        { id: "3", name: "3", state: "3" },
+        { id: "3", name: "3, 3", state: "3" },
         { id: "4", name: "4" }
       ]
     }

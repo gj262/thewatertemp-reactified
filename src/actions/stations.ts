@@ -62,7 +62,7 @@ function _cleanStations(stations: any[]): Station[] {
     .map((station: Station) => {
       return {
         id: station.id,
-        name: station.name,
+        name: station.name + (station.state ? ", " + station.state : ""),
         ...(station.state ? { state: station.state } : {})
       };
     });
