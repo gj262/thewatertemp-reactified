@@ -31,6 +31,7 @@ function commonAppTest(overrideProps: Partial<TheWaterTempProps>) {
       stations={null}
       errorLoadingStations={null}
       latestTemperature={null}
+      errorLoadingLatestTemperature={null}
       path=""
       {...overrideProps}
     />
@@ -73,8 +74,10 @@ function makeMockComponentsWithCallbackTriggers() {
         </div>
       );
     },
-    TemperatureValue: ({ temperature }) => (
-      <div>VALUE: {temperature ? temperature.value.toFixed(1) : "--.-"}</div>
+    TemperatureValue: ({ temperature, caption }) => (
+      <div>
+        VALUE: {temperature ? temperature.value.toFixed(1) : "--.-"} {caption}
+      </div>
     )
   };
 
@@ -231,6 +234,7 @@ test("loads the latest temp for a new station", async () => {
       stations={null}
       errorLoadingStations={null}
       latestTemperature={new Temperature(76.1, TemperatureScale.FAHRENHEIT)}
+      errorLoadingLatestTemperature={null}
       path=""
     />
   );
@@ -240,6 +244,38 @@ test("loads the latest temp for a new station", async () => {
   expect(mockActions.loadLatestTemperature).toBeCalledTimes(2);
 });
 
-// errorLoadingStations -> errorLoadingStations
+test("may display a loading error for the latest temperature", () => {
+  const { getByText } = commonAppTest({
+    errorLoadingLatestTemperature:
+      "No data was found. This product may not be offered at this station at the requested time."
+  });
+
+  expect(
+    getByText(
+      "No data was found. This product may not be offered at this station at the requested time."
+    )
+  ).not.toBeNull();
+});
+
+test("may display a recorded timestamp for the latest temperature", () => {
+  const { getByText } = commonAppTest({
+    latestTemperature: new Temperature(
+      76.1,
+      TemperatureScale.FAHRENHEIT,
+      "2020-03-02 18:42"
+    )
+  });
+
+  expect(getByText(/2020-03-02 18:42/)).not.toBeNull();
+});
+
+test("may display loading for the latest temperature", () => {
+  const { getByText } = commonAppTest({
+    station: { name: "Somewhere", id: "22" }
+  });
+
+  expect(getByText(/loading.../)).not.toBeNull();
+});
+
+// errorLoadingLatestTemperature
 // refreshes
-// latestTemperatureerrorLoadingStations

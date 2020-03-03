@@ -31,7 +31,8 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
       errorLoadingStations,
       station,
       invalidStationId,
-      latestTemperature
+      latestTemperature,
+      errorLoadingLatestTemperature
     } = this.props;
 
     if (!userPreferences) {
@@ -69,6 +70,12 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
           <h2>Latest reading:</h2>
           <Components.TemperatureValue
             temperature={latestTemperature || undefined}
+            caption={
+              <LatestTemperatureCaption
+                temperature={latestTemperature || undefined}
+                error={errorLoadingLatestTemperature || undefined}
+              />
+            }
             large
           />
         </div>
@@ -134,6 +141,24 @@ const StationInfo: React.FC<StationInfoProps> = ({
   );
 };
 
+interface LatestTemperatureCaptionProps {
+  temperature?: Temperature;
+  error?: string;
+}
+
+const LatestTemperatureCaption: React.FC<LatestTemperatureCaptionProps> = ({
+  temperature,
+  error
+}) => {
+  return (
+    <>
+      {temperature && <span>Recorded: {temperature?.timestamp}</span>}
+      {error && <span className="loading-error">{error}</span>}
+      {!temperature && !error && <span>loading...</span>}
+    </>
+  );
+};
+
 // Routing (stationId) -> Store (lots...) -> Dependency Injection -> App
 
 const WithRouting: React.FunctionComponent = props => (
@@ -196,6 +221,10 @@ const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {
     latestTemperature: fromLatestTemperature.getLatestTemperature(
       state.latestTemperature,
       stationId
+    ),
+    errorLoadingLatestTemperature: fromLatestTemperature.getFailureMessage(
+      state.latestTemperature,
+      stationId
     )
   };
 };
@@ -214,6 +243,7 @@ interface PropsFromStore {
   station?: Station;
   invalidStationId?: string;
   latestTemperature: Temperature | null;
+  errorLoadingLatestTemperature: string | null;
 }
 
 export default WithRouting;
