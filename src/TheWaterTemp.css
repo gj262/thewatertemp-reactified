@@ -13,8 +13,13 @@
 .the-water-temperature header,
 .the-water-temperature .select-station,
 .the-water-temperature > a,
+.the-water-temperature > h2,
 .the-water-temperature > span {
   margin-bottom: var(--app-spacing);
+}
+
+.the-water-temperature > h2.latest-reading {
+  margin-bottom: 0;
 }
 
 .the-water-temperature > a,

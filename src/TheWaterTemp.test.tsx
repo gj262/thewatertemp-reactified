@@ -32,6 +32,7 @@ function commonAppTest(overrideProps: Partial<TheWaterTempProps>) {
       errorLoadingStations={null}
       latestTemperature={null}
       errorLoadingLatestTemperature={null}
+      last24Hours={null}
       path=""
       {...overrideProps}
     />
@@ -51,7 +52,8 @@ function makeMockActions() {
     loadUserPreferences: jest.fn(),
     updateUserPreferences: jest.fn(),
     loadStations: jest.fn(),
-    loadLatestTemperature: jest.fn()
+    loadLatestTemperature: jest.fn(),
+    loadLast24Hours: jest.fn()
   };
 }
 
@@ -78,6 +80,13 @@ function makeMockComponentsWithCallbackTriggers() {
       <div>
         VALUE: {temperature ? temperature.value.toFixed(1) : "--.-"} {caption}
       </div>
+    ),
+    TemperatureRange: ({ range }) => (
+      <>
+        <div>Min: {range ? range.min.value : "--.-"} </div>
+        <div>Avg: {range ? range.avg.value : "--.-"} </div>
+        <div>Max: {range ? range.max.value : "--.-"} </div>
+      </>
     )
   };
 
@@ -216,34 +225,6 @@ test("loads the latest temp", () => {
   expect(mockActions.loadLatestTemperature).toBeCalledTimes(1);
 });
 
-test("loads the latest temp for a new station", async () => {
-  let { mockActions, mockComponents, rerender, getByText } = commonAppTest({
-    stationId: "22",
-    latestTemperature: new Temperature(12.3456, TemperatureScale.FAHRENHEIT)
-  });
-
-  rerender(
-    <TheWaterTemp
-      actions={mockActions}
-      dispatch={jest.fn()}
-      Components={mockComponents}
-      userPreferences={userPreferences}
-      navigateToStation={jest.fn()}
-      stationId="33"
-      loadingStations={false}
-      stations={null}
-      errorLoadingStations={null}
-      latestTemperature={new Temperature(76.1, TemperatureScale.FAHRENHEIT)}
-      errorLoadingLatestTemperature={null}
-      path=""
-    />
-  );
-
-  await wait(() => getByText(/76.1/));
-
-  expect(mockActions.loadLatestTemperature).toBeCalledTimes(2);
-});
-
 test("may display a loading error for the latest temperature", () => {
   const { getByText } = commonAppTest({
     errorLoadingLatestTemperature:
@@ -275,4 +256,62 @@ test("may display loading for the latest temperature", () => {
   });
 
   expect(getByText(/loading.../)).not.toBeNull();
+});
+
+test("displays the last 24 hour range", () => {
+  const { queryByText } = commonAppTest({
+    last24Hours: {
+      min: new Temperature(
+        32.8,
+        TemperatureScale.FAHRENHEIT,
+        "2020-03-03 18:42"
+      ),
+      max: new Temperature(
+        34.8,
+        TemperatureScale.FAHRENHEIT,
+        "2020-03-03 18:54"
+      ),
+      avg: new Temperature(33.8, TemperatureScale.FAHRENHEIT)
+    }
+  });
+
+  expect(queryByText(/Min: 32.8/)).not.toBeNull();
+  expect(queryByText(/Avg: 33.8/)).not.toBeNull();
+  expect(queryByText(/Max: 34.8/)).not.toBeNull();
+});
+
+test("loads the last 24 hour range", () => {
+  const { mockActions } = commonAppTest({ stationId: "22" });
+
+  expect(mockActions.loadLast24Hours).toBeCalledTimes(1);
+});
+
+test("loads the latest temp & last 24 for a new station", async () => {
+  let { mockActions, mockComponents, rerender, getByText } = commonAppTest({
+    stationId: "22",
+    latestTemperature: new Temperature(12.3456, TemperatureScale.FAHRENHEIT)
+  });
+
+  rerender(
+    <TheWaterTemp
+      actions={mockActions}
+      dispatch={jest.fn()}
+      Components={mockComponents}
+      userPreferences={userPreferences}
+      navigateToStation={jest.fn()}
+      stationId="33"
+      loadingStations={false}
+      stations={null}
+      errorLoadingStations={null}
+      latestTemperature={new Temperature(76.1, TemperatureScale.FAHRENHEIT)}
+      errorLoadingLatestTemperature={null}
+      last24Hours={null}
+      path=""
+    />
+  );
+
+  await wait(() => getByText(/76.1/));
+
+  expect(mockActions.loadLatestTemperature).toBeCalledTimes(2);
+  expect(mockActions.loadLast24Hours).toBeCalledTimes(2);
 });

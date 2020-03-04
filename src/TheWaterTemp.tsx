@@ -6,13 +6,15 @@ import { RootState } from "./reducers";
 import * as fromUserPreferences from "./reducers/userPreferences";
 import * as fromStations from "./reducers/stations";
 import * as fromLatestTemperature from "./reducers/latestTemperature";
+import * as fromLast24Hours from "./reducers/last24Hours";
 import makeActions, { ActionTypes } from "./actions";
 import AllComponents, { ComponentTypes } from "./components";
 import {
   TemperatureScale,
   UserPreferences,
   Station,
-  Temperature
+  Temperature,
+  TemperatureRange
 } from "./types";
 import { DEFAULTS } from "./defaults";
 import { Dispatch } from "redux";
@@ -32,7 +34,8 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
       station,
       invalidStationId,
       latestTemperature,
-      errorLoadingLatestTemperature
+      errorLoadingLatestTemperature,
+      last24Hours
     } = this.props;
 
     if (!userPreferences) {
@@ -67,7 +70,7 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
             stations={stations || undefined}
           />
           <StationInfo invalidStationId={invalidStationId} station={station} />
-          <h2>Latest reading:</h2>
+          <h2 className="latest-reading">Latest reading:</h2>
           <Components.TemperatureValue
             temperature={latestTemperature || undefined}
             caption={
@@ -78,6 +81,8 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
             }
             large
           />
+          <h2>Over the last 24 hours:</h2>
+          <Components.TemperatureRange range={last24Hours || undefined} />
         </div>
       </div>
     );
@@ -91,6 +96,7 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
       actions.loadStations();
     }
     actions.loadLatestTemperature(stationId);
+    actions.loadLast24Hours(stationId);
   }
 
   onTemperatureScaleChange = (scale: TemperatureScale) => {
@@ -113,6 +119,7 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
 
     if (stationId !== prevProps.stationId) {
       actions.loadLatestTemperature(stationId);
+      actions.loadLast24Hours(stationId);
     }
   }
 }
@@ -221,10 +228,24 @@ const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {
     stationId
   );
 
-  if (userPreferences && latestTemperature) {
-    latestTemperature = latestTemperature.usingScale(
-      userPreferences.temperatureScale
-    );
+  let last24Hours = fromLast24Hours.getLast24Hours(
+    state.last24Hours,
+    stationId
+  );
+
+  if (userPreferences) {
+    if (latestTemperature) {
+      latestTemperature = latestTemperature.usingScale(
+        userPreferences.temperatureScale
+      );
+    }
+    if (last24Hours) {
+      last24Hours = {
+        min: last24Hours.min.usingScale(userPreferences.temperatureScale),
+        max: last24Hours.max.usingScale(userPreferences.temperatureScale),
+        avg: last24Hours.avg.usingScale(userPreferences.temperatureScale)
+      };
+    }
   }
 
   return {
@@ -237,7 +258,8 @@ const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {
     errorLoadingLatestTemperature: fromLatestTemperature.getFailureMessage(
       state.latestTemperature,
       stationId
-    )
+    ),
+    last24Hours
   };
 };
 
@@ -256,6 +278,7 @@ interface PropsFromStore {
   invalidStationId?: string;
   latestTemperature: Temperature | null;
   errorLoadingLatestTemperature: string | null;
+  last24Hours: TemperatureRange | null;
 }
 
 export default WithRouting;

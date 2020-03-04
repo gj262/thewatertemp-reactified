@@ -1,24 +1,33 @@
 import React from "react";
-import { Temperature } from "../types";
+import { TemperatureRange } from "../types";
 import TemperatureValue from "./TemperatureValue";
 import "./TemperatureRange.css";
 
 interface TemperatureRangeProps {
-  min: Temperature;
-  avg: Temperature;
-  max: Temperature;
+  range?: TemperatureRange;
 }
 
-const TemperatureRange: React.FunctionComponent<TemperatureRangeProps> = ({
-  min,
-  avg,
-  max
+export type TemperatureRangeComponentType = React.FunctionComponent<
+  TemperatureRangeProps
+>;
+
+const TemperatureRangeComponent: TemperatureRangeComponentType = ({
+  range
 }) => (
   <span className="temperature-range">
-    <TemperatureValue temperature={min} caption="Min" />
-    <TemperatureValue temperature={avg} caption="Avg" />
-    <TemperatureValue temperature={max} caption="Max" />
+    <TemperatureValue
+      temperature={range ? range.min : undefined}
+      caption="Min"
+    />
+    <TemperatureValue
+      temperature={range ? range.avg : undefined}
+      caption="Avg"
+    />
+    <TemperatureValue
+      temperature={range ? range.max : undefined}
+      caption="Max"
+    />
   </span>
 );
 
-export default TemperatureRange;
+export default TemperatureRangeComponent;
