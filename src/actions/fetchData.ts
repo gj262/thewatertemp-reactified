@@ -124,8 +124,9 @@ function _max(data: Temperature[]) {
 }
 
 function _avg(data: Temperature[]) {
-  return (
+  return new Temperature(
     data.reduce((accumulator, current) => accumulator + current.value, 0) /
-    data.length
+      data.length,
+    data[0].scale
   );
 }

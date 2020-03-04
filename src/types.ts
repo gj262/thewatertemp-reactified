@@ -47,6 +47,12 @@ export class Temperature {
   }
 }
 
+export interface TemperatureRange {
+  min: Temperature;
+  max: Temperature;
+  avg: Temperature;
+}
+
 interface _UserPreferences {
   temperatureScale: TemperatureScale;
 }
