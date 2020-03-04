@@ -29,7 +29,7 @@ function latestTemperature(
         ...state,
         [action.meta.stationId]: {
           isLoading: false,
-          temperature: action.payload.temperature
+          temperature: action.payload.data
         }
       };
     case ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE:

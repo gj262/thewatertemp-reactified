@@ -22,11 +22,7 @@ it("knows about loading", () => {
 const loads: Action = {
   type: ActionTypes.LATEST_TEMPERATURE_LOADED,
   payload: {
-    temperature: new Temperature(
-      55.8,
-      TemperatureScale.FAHRENHEIT,
-      "2020-02-29 16:36"
-    )
+    data: new Temperature(55.8, TemperatureScale.FAHRENHEIT, "2020-02-29 16:36")
   },
   meta: { stationId: "22" }
 };
@@ -34,7 +30,7 @@ const loads: Action = {
 it("loads", () => {
   expect(
     getLatestTemperature(reducer(reducer({}, loading), loads), "22")
-  ).toStrictEqual(loads.payload.temperature);
+  ).toStrictEqual(loads.payload.data);
 });
 
 it("is no longer loading", () => {
@@ -67,7 +63,7 @@ it("refresh is not loading", () => {
   const refreshing = reducer(reducer(reducer({}, loading), loads), loading);
 
   expect(getLatestTemperature(refreshing, "22")).toStrictEqual(
-    loads.payload.temperature
+    loads.payload.data
   );
   expect(isLoading(refreshing, "22")).toBe(false);
 });

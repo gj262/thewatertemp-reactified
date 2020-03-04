@@ -61,7 +61,10 @@ export enum ActionTypes {
   FAILED_TO_LOAD_STATIONS = "FAILED_TO_LOAD_STATIONS",
   LOADING_LATEST_TEMPERATURE = "LOADING_LATEST_TEMPERATURE",
   LATEST_TEMPERATURE_LOADED = "LATEST_TEMPERATURE_LOADED",
-  FAILED_TO_LOAD_LATEST_TEMPERATURE = "FAILED_TO_LOAD_LATEST_TEMPERATURE"
+  FAILED_TO_LOAD_LATEST_TEMPERATURE = "FAILED_TO_LOAD_LATEST_TEMPERATURE",
+  LOADING_LAST_24_HOURS = "LOADING_LAST_24_HOURS",
+  LAST_24_HOURS_LOADED = "LAST_24_HOURS_LOADED",
+  FAILED_TO_LOAD_LAST_24_HOURS = "FAILED_TO_LOAD_LAST_24_HOURS"
 }
 
 export interface UserPreferencesLoadedAction {
@@ -95,12 +98,34 @@ export interface LoadingLatestTemperatureAction {
 
 export interface LatestTemperatureLoadedAction {
   type: ActionTypes.LATEST_TEMPERATURE_LOADED;
-  payload: { temperature: Temperature };
+  payload: { data: Temperature };
   meta: { stationId: string };
 }
 
 export interface FailedToLoadLatestTemperatureAction {
   type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE;
+  error: Error;
+  meta: { stationId: string };
+}
+
+export interface LoadingLast24HoursAction {
+  type: ActionTypes.LOADING_LAST_24_HOURS;
+  meta: { stationId: string };
+}
+
+export interface Last24HoursLoadedAction {
+  type: ActionTypes.LAST_24_HOURS_LOADED;
+  payload: {
+    data: Temperature[];
+    min: Temperature;
+    max: Temperature;
+    avg: Temperature;
+  };
+  meta: { stationId: string };
+}
+
+export interface FailedToLoadLast24HoursAction {
+  type: ActionTypes.FAILED_TO_LOAD_LAST_24_HOURS;
   error: Error;
   meta: { stationId: string };
 }
@@ -113,7 +138,22 @@ export type Action =
   | FailedToLoadStationsAction
   | LoadingLatestTemperatureAction
   | LatestTemperatureLoadedAction
-  | FailedToLoadLatestTemperatureAction;
+  | FailedToLoadLatestTemperatureAction
+  | LoadingLast24HoursAction
+  | Last24HoursLoadedAction
+  | FailedToLoadLast24HoursAction;
+
+export interface FetchDataStageTypes {
+  loading: ActionTypes;
+  fetched: ActionTypes;
+  failed: ActionTypes;
+}
+
+interface FetchLatestTemperatureMeta {
+  stationId: string;
+}
+
+export type FetchDataMeta = FetchLatestTemperatureMeta;
 
 export interface LocalStorage {
   getItem: (name: string) => string | null;

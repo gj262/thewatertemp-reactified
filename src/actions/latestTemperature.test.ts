@@ -17,8 +17,8 @@ const positiveReplyData = {
 const stationId = "22";
 
 const positiveReply = () =>
-  nock(DEFAULTS.LATEST_TEMPERATURE_HOSTNAME)
-    .get(DEFAULTS.LATEST_TEMPERATURE_PATH + stationId + "&date=latest")
+  nock(DEFAULTS.NOAA_API_HOSTNAME)
+    .get(DEFAULTS.TEMPERATURE_DATA_PATH + stationId + "&date=latest")
     .reply(200, positiveReplyData);
 
 it("dispatches loading", async () => {
@@ -52,7 +52,7 @@ it("dispatches the latest temp", async () => {
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.LATEST_TEMPERATURE_LOADED,
     payload: {
-      temperature: new Temperature(
+      data: new Temperature(
         55.8,
         TemperatureScale.FAHRENHEIT,
         "2020-02-29 16:36"
@@ -65,8 +65,8 @@ it("dispatches the latest temp", async () => {
 it("dispatches an error for non 2xx", async () => {
   const dispatch = jest.fn();
   console.log = jest.fn();
-  nock(DEFAULTS.LATEST_TEMPERATURE_HOSTNAME)
-    .get(DEFAULTS.LATEST_TEMPERATURE_PATH + stationId + "&date=latest")
+  nock(DEFAULTS.NOAA_API_HOSTNAME)
+    .get(DEFAULTS.TEMPERATURE_DATA_PATH + stationId + "&date=latest")
     .reply(404, positiveReplyData);
 
   await loadLatestTemperature(dispatch, stationId);
@@ -74,9 +74,7 @@ it("dispatches an error for non 2xx", async () => {
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
-    error: new Error(
-      "Cannot load the temperature data. Request failed with status code 404"
-    ),
+    error: new Error("Request failed with status code 404"),
     meta: { stationId }
   });
 });
@@ -84,8 +82,8 @@ it("dispatches an error for non 2xx", async () => {
 it("dispatches an error for bad data", async () => {
   const dispatch = jest.fn();
   console.log = jest.fn();
-  nock(DEFAULTS.LATEST_TEMPERATURE_HOSTNAME)
-    .get(DEFAULTS.LATEST_TEMPERATURE_PATH + stationId + "&date=latest")
+  nock(DEFAULTS.NOAA_API_HOSTNAME)
+    .get(DEFAULTS.TEMPERATURE_DATA_PATH + stationId + "&date=latest")
     .reply(200, {});
 
   await loadLatestTemperature(dispatch, stationId);
@@ -93,7 +91,7 @@ it("dispatches an error for bad data", async () => {
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
-    error: new Error("Cannot load the temperature data. No data was returned"),
+    error: new Error("No data was returned"),
     meta: { stationId }
   });
 });
@@ -101,8 +99,8 @@ it("dispatches an error for bad data", async () => {
 it("dispatches an error for an error response", async () => {
   const dispatch = jest.fn();
   console.log = jest.fn();
-  nock(DEFAULTS.LATEST_TEMPERATURE_HOSTNAME)
-    .get(DEFAULTS.LATEST_TEMPERATURE_PATH + stationId + "&date=latest")
+  nock(DEFAULTS.NOAA_API_HOSTNAME)
+    .get(DEFAULTS.TEMPERATURE_DATA_PATH + stationId + "&date=latest")
     .reply(200, {
       error: {
         message: "No data was found. This product ..."
@@ -114,9 +112,7 @@ it("dispatches an error for an error response", async () => {
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
-    error: new Error(
-      "Cannot load the temperature data. No data was found. This product ..."
-    ),
+    error: new Error("No data was found. This product ..."),
     meta: { stationId }
   });
 });
@@ -136,8 +132,8 @@ const makeNegativeReply = (overrideDatum: any) => {
 it("must have a non zero 'v'", async () => {
   const dispatch = jest.fn();
   console.log = jest.fn();
-  nock(DEFAULTS.LATEST_TEMPERATURE_HOSTNAME)
-    .get(DEFAULTS.LATEST_TEMPERATURE_PATH + stationId + "&date=latest")
+  nock(DEFAULTS.NOAA_API_HOSTNAME)
+    .get(DEFAULTS.TEMPERATURE_DATA_PATH + stationId + "&date=latest")
     .reply(200, makeNegativeReply({ v: 0.0 }));
 
   await loadLatestTemperature(dispatch, stationId);
@@ -145,7 +141,7 @@ it("must have a non zero 'v'", async () => {
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
-    error: new Error("Cannot load the temperature data. The data is unuseable"),
+    error: new Error("The data is unuseable"),
     meta: { stationId }
   });
 });
@@ -155,8 +151,8 @@ it("must have a 'v'", async () => {
   console.log = jest.fn();
   const reply = makeNegativeReply({});
   delete reply.data[0].v;
-  nock(DEFAULTS.LATEST_TEMPERATURE_HOSTNAME)
-    .get(DEFAULTS.LATEST_TEMPERATURE_PATH + stationId + "&date=latest")
+  nock(DEFAULTS.NOAA_API_HOSTNAME)
+    .get(DEFAULTS.TEMPERATURE_DATA_PATH + stationId + "&date=latest")
     .reply(200, reply);
 
   await loadLatestTemperature(dispatch, stationId);
@@ -164,7 +160,7 @@ it("must have a 'v'", async () => {
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
-    error: new Error("Cannot load the temperature data. The data is unuseable"),
+    error: new Error("The data is unuseable"),
     meta: { stationId }
   });
 });
@@ -174,8 +170,8 @@ it("must have a 'v=t'", async () => {
   console.log = jest.fn();
   const reply = makeNegativeReply({});
   delete reply.data[0].t;
-  nock(DEFAULTS.LATEST_TEMPERATURE_HOSTNAME)
-    .get(DEFAULTS.LATEST_TEMPERATURE_PATH + stationId + "&date=latest")
+  nock(DEFAULTS.NOAA_API_HOSTNAME)
+    .get(DEFAULTS.TEMPERATURE_DATA_PATH + stationId + "&date=latest")
     .reply(200, reply);
 
   await loadLatestTemperature(dispatch, stationId);
@@ -183,7 +179,7 @@ it("must have a 'v=t'", async () => {
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
-    error: new Error("Cannot load the temperature data. The data is unuseable"),
+    error: new Error("The data is unuseable"),
     meta: { stationId }
   });
 });

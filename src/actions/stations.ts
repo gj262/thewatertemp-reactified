@@ -9,7 +9,7 @@ export function loadStations(dispatch: Dispatch) {
   });
 
   return axios
-    .get(DEFAULTS.STATION_LIST_HOSTNAME + DEFAULTS.STATION_LIST_PATH)
+    .get(DEFAULTS.NOAA_API_HOSTNAME + DEFAULTS.STATION_LIST_PATH)
     .then(response => {
       if (response.data && response.data.error && response.data.error.message) {
         _dispatchLoadFailed(dispatch, response.data.error.message);

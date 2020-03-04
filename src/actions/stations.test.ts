@@ -13,7 +13,7 @@ const positiveReplyData = {
 
 it("dispatches loading", async () => {
   const dispatch = jest.fn();
-  nock(DEFAULTS.STATION_LIST_HOSTNAME)
+  nock(DEFAULTS.NOAA_API_HOSTNAME)
     .get(DEFAULTS.STATION_LIST_PATH)
     .reply(200, positiveReplyData);
 
@@ -26,7 +26,7 @@ it("dispatches loading", async () => {
 
 it("hits the station list API", async () => {
   const dispatch = jest.fn();
-  const catchit = nock(DEFAULTS.STATION_LIST_HOSTNAME)
+  const catchit = nock(DEFAULTS.NOAA_API_HOSTNAME)
     .get(DEFAULTS.STATION_LIST_PATH)
     .reply(200, positiveReplyData);
 
@@ -37,7 +37,7 @@ it("hits the station list API", async () => {
 
 it("dispatches the list", async () => {
   const dispatch = jest.fn();
-  nock(DEFAULTS.STATION_LIST_HOSTNAME)
+  nock(DEFAULTS.NOAA_API_HOSTNAME)
     .get(DEFAULTS.STATION_LIST_PATH)
     .reply(200, positiveReplyData);
 
@@ -58,7 +58,7 @@ it("dispatches the list", async () => {
 it("dispatches an error for non 2xx", async () => {
   const dispatch = jest.fn();
   console.log = jest.fn();
-  nock(DEFAULTS.STATION_LIST_HOSTNAME)
+  nock(DEFAULTS.NOAA_API_HOSTNAME)
     .get(DEFAULTS.STATION_LIST_PATH)
     .reply(500, positiveReplyData);
 
@@ -76,7 +76,7 @@ it("dispatches an error for non 2xx", async () => {
 it("dispatches an error for no stations", async () => {
   const dispatch = jest.fn();
   console.log = jest.fn();
-  nock(DEFAULTS.STATION_LIST_HOSTNAME)
+  nock(DEFAULTS.NOAA_API_HOSTNAME)
     .get(DEFAULTS.STATION_LIST_PATH)
     .reply(200, {});
 
@@ -92,7 +92,7 @@ it("dispatches an error for no stations", async () => {
 it("dispatches an error for an error response", async () => {
   const dispatch = jest.fn();
   console.log = jest.fn();
-  nock(DEFAULTS.STATION_LIST_HOSTNAME)
+  nock(DEFAULTS.NOAA_API_HOSTNAME)
     .get(DEFAULTS.STATION_LIST_PATH)
     .reply(200, {
       error: {
@@ -111,7 +111,7 @@ it("dispatches an error for an error response", async () => {
 
 it("must have id and name / keeps 'state' / drops other fields", async () => {
   const dispatch = jest.fn();
-  nock(DEFAULTS.STATION_LIST_HOSTNAME)
+  nock(DEFAULTS.NOAA_API_HOSTNAME)
     .get(DEFAULTS.STATION_LIST_PATH)
     .reply(200, {
       stations: [
