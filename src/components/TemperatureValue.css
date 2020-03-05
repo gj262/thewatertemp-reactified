@@ -4,8 +4,12 @@ span.temperature-value {
   font-size: var(--label-font-size);
 }
 
-.temperature-value > span:nth-child(2) {
+.temperature-value > span.caption {
   font-size: var(--regular-font-size);
+}
+
+.temperature-value > span.caption > :not(:last-child) {
+  margin-right: 5px;
 }
 
 .temperature-value > span.large:first-child {

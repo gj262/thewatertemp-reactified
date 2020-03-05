@@ -29,12 +29,32 @@ test("captions may be react elements", () => {
   expect(getByText("I'm a caption")).not.toBeNull();
 });
 
+test("may show loading", () => {
+  const { getByText } = render(<TemperatureValue isLoading caption="Min" />);
+  expect(getByText(/loading/i)).not.toBeNull();
+});
+
+test("may show an error message", () => {
+  const { getByText } = render(
+    <TemperatureValue errorMsg="oops" caption="Min" />
+  );
+  expect(getByText(/oops/i)).not.toBeNull();
+});
+
+test("loading trumps errors", () => {
+  const { queryByText } = render(
+    <TemperatureValue isLoading errorMsg="oops" caption="Min" />
+  );
+  expect(queryByText(/oops/i)).toBeNull();
+  expect(queryByText(/loading/i)).not.toBeNull();
+});
+
 test("may be large", () => {
   const { getByText } = render(<TemperatureValue temperature={t} large />);
   expect(getByText("12.3°")).toHaveClass("large");
 });
 
-test("missing temps show --.- to indicate loading", () => {
-  const { getByText } = render(<TemperatureValue caption="loading..." />);
+test("missing temps show --.-", () => {
+  const { getByText } = render(<TemperatureValue caption="Min" />);
   expect(getByText(/--.-/)).not.toBeNull();
 });

@@ -46,7 +46,7 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
       return (
         <div className="wrap">
           <div className="the-water-temperature">
-            <span className="loading-error">{errorLoadingStations}</span>
+            <span className="error">{errorLoadingStations}</span>
           </div>
         </div>
       );
@@ -135,7 +135,7 @@ const StationInfo: React.FC<StationInfoProps> = ({
 }) => {
   if (invalidStationId) {
     return (
-      <span className="loading-error">
+      <span className="error">
         This is not a valid station ID: {invalidStationId}
       </span>
     );
@@ -162,7 +162,7 @@ const LatestTemperatureCaption: React.FC<LatestTemperatureCaptionProps> = ({
   return (
     <>
       {temperature && <span>Recorded: {temperature?.timestamp}</span>}
-      {error && <span className="loading-error">{error}</span>}
+      {error && <span className="error">{error}</span>}
       {!temperature && !error && <span>loading...</span>}
     </>
   );

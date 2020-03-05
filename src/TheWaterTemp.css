@@ -47,6 +47,10 @@ h2 {
   border-radius: var(--label-border-radius);
 }
 
-.loading-error {
+.loading {
+  color: var(--app-loading-color);
+}
+
+.error {
   color: red;
 }
