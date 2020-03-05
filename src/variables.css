@@ -1,5 +1,6 @@
 :root {
   --app-width: 360px;
+  --app-one-third-width: 120px;
   --app-max-width: 540px;
   --app-spacing: 12px;
   --app-loading-color: #aaa;

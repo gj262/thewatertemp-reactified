@@ -2,3 +2,7 @@ span.temperature-range {
   display: flex;
   justify-content: space-between;
 }
+
+span.temperature-range > span.temperature-value {
+  width: var(--app-one-third-width);
+}

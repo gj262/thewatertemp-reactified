@@ -14,8 +14,19 @@ export default {
   component: TemperatureRangeComponent
 };
 
-export const aRange = () => (
-  <div style={{ width: "320px" }}>
+export const States = () => (
+  <div
+    style={{
+      width: "var(--app-width)",
+      display: "flex",
+      flexDirection: "column"
+    }}
+  >
+    <h3>A Range</h3>
     <TemperatureRangeComponent range={range} />
+    <h3>Without A Range</h3>
+    <TemperatureRangeComponent />
+    <h3>Loading...</h3>
+    <TemperatureRangeComponent isLoading />
   </div>
 );

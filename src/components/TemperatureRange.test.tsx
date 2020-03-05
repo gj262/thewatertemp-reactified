@@ -23,3 +23,8 @@ test("renders captions", () => {
   expect(getByText("Avg")).not.toBeNull();
   expect(getByText("Max")).not.toBeNull();
 });
+
+test("renders loading", () => {
+  const { queryAllByText } = render(<TemperatureRangeComponent isLoading />);
+  expect(queryAllByText(/loading/i)).toHaveLength(3);
+});

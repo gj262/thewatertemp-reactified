@@ -5,6 +5,7 @@ import "./TemperatureRange.css";
 
 interface TemperatureRangeProps {
   range?: TemperatureRange;
+  isLoading?: boolean;
 }
 
 export type TemperatureRangeComponentType = React.FunctionComponent<
@@ -12,20 +13,24 @@ export type TemperatureRangeComponentType = React.FunctionComponent<
 >;
 
 const TemperatureRangeComponent: TemperatureRangeComponentType = ({
-  range
+  range,
+  isLoading = false
 }) => (
   <span className="temperature-range">
     <TemperatureValue
       temperature={range ? range.min : undefined}
       caption="Min"
+      isLoading={isLoading}
     />
     <TemperatureValue
       temperature={range ? range.avg : undefined}
       caption="Avg"
+      isLoading={isLoading}
     />
     <TemperatureValue
       temperature={range ? range.max : undefined}
       caption="Max"
+      isLoading={isLoading}
     />
   </span>
 );
