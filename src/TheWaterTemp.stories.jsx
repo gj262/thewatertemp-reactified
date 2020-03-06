@@ -11,7 +11,8 @@ export const app = () => (
     actions={{
       loadUserPreferences: () => null,
       loadStations: () => null,
-      loadLatestTemperature: stationId => null
+      loadLatestTemperature: stationId => null,
+      loadLast24Hours: stationId => null
     }}
     Components={{}}
     userPreferences={{}}
