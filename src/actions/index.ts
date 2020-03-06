@@ -26,9 +26,12 @@ export default function makeActions(
       dispatch
     ),
     loadLast24Hours: forLast24Hours.loadLast24Hours.bind({}, dispatch),
-    loadLastSevenDayComparison: (stationId: string) => new Promise(() => null),
-    loadTodayInPriorYearsComparison: (stationId: string) =>
-      new Promise(() => null)
+    loadLastSevenDayComparison: (stationId: string, latestStationTime: Date) =>
+      new Promise(() => null),
+    loadTodayInPriorYearsComparison: (
+      stationId: string,
+      latestStationTime: Date
+    ) => new Promise(() => null)
   };
 }
 
@@ -38,6 +41,12 @@ export interface ActionTypes {
   loadStations: () => Promise<void>;
   loadLatestTemperature: (stationId: string) => Promise<void>;
   loadLast24Hours: (stationId: string) => Promise<void>;
-  loadLastSevenDayComparison: (stationId: string) => Promise<void>;
-  loadTodayInPriorYearsComparison: (stationId: string) => Promise<void>;
+  loadLastSevenDayComparison: (
+    stationId: string,
+    latestStationTime: Date
+  ) => Promise<void>;
+  loadTodayInPriorYearsComparison: (
+    stationId: string,
+    latestStationTime: Date
+  ) => Promise<void>;
 }

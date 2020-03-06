@@ -52,7 +52,7 @@ export function fetchData(
         return;
       }
 
-      const data = _cleanData(response.data.data);
+      const data = cleanData(response.data.data);
 
       if (data.length === 0) {
         dispatchFetchFailed("The data is unuseable");
@@ -62,7 +62,7 @@ export function fetchData(
       dispatch({
         type: stageTypes.fetched,
         payload: range
-          ? { data, min: _min(data), max: _max(data), avg: _avg(data) }
+          ? { data, min: min(data), max: max(data), avg: avg(data) }
           : { data: data[0] },
         meta
       });
@@ -86,7 +86,7 @@ function _dispatchFetchFailed(
   });
 }
 
-function _cleanData(data: any[]): Temperature[] {
+export function cleanData(data: any[]): Temperature[] {
   return data
     .filter((datum: any) => datum.t && datum.v)
     .map(datum => {
@@ -105,7 +105,7 @@ function _cleanData(data: any[]): Temperature[] {
     .filter(t => t.value && t.timestamp);
 }
 
-function _min(data: Temperature[]) {
+export function min(data: Temperature[]) {
   return data.reduce((accumulator, current) => {
     if (current.value < accumulator.value) {
       accumulator = current;
@@ -114,7 +114,7 @@ function _min(data: Temperature[]) {
   }, data[0]);
 }
 
-function _max(data: Temperature[]) {
+export function max(data: Temperature[]) {
   return data.reduce((accumulator, current) => {
     if (current.value > accumulator.value) {
       accumulator = current;
@@ -123,7 +123,7 @@ function _max(data: Temperature[]) {
   }, data[0]);
 }
 
-function _avg(data: Temperature[]) {
+export function avg(data: Temperature[]) {
   return new Temperature(
     data.reduce((accumulator, current) => accumulator + current.value, 0) /
       data.length,

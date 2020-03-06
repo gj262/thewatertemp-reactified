@@ -10,6 +10,8 @@ import { ComparisonIds } from "../types";
 
 const testStationId = "22";
 
+const latestStationTime = new Date("2020-03-06 08:30"); // Friday
+
 function commonTest(overrideProps: Partial<ComparisonProps>) {
   const mockActions = makeMockActions();
   const {
@@ -22,6 +24,7 @@ function commonTest(overrideProps: Partial<ComparisonProps>) {
     dispatch: jest.fn(),
     Components: mockComponents,
     stationId: testStationId,
+    latestStationTime,
     comparisonId: ComparisonIds.LAST_SEVEN_DAYS,
     onComparisonChange: jest.fn(),
     ...overrideProps

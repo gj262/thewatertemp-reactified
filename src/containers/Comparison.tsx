@@ -13,6 +13,7 @@ export type ComparisonProps = PropsFromAbove &
 
 export interface PropsFromAbove {
   stationId: string;
+  latestStationTime: Date;
   comparisonId: ComparisonIds;
   onComparisonChange: (id: ComparisonIds) => void;
 }
@@ -53,14 +54,14 @@ export class Comparison extends React.Component<ComparisonProps> {
   }
 
   loadComparison() {
-    const { actions, stationId, comparisonId } = this.props;
+    const { actions, stationId, comparisonId, latestStationTime } = this.props;
 
     switch (comparisonId) {
       case ComparisonIds.LAST_SEVEN_DAYS:
-        actions.loadLastSevenDayComparison(stationId);
+        actions.loadLastSevenDayComparison(stationId, latestStationTime);
         break;
       case ComparisonIds.TODAY_IN_PRIOR_YEARS:
-        actions.loadTodayInPriorYearsComparison(stationId);
+        actions.loadTodayInPriorYearsComparison(stationId, latestStationTime);
         break;
       default:
         throw new Error("Unimplemented comparison: " + comparisonId);
