@@ -9,7 +9,13 @@ export default {
 };
 
 export const states = () => (
-  <div style={{ display: "flex", flexDirection: "column" }}>
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      width: "var(--app-width)"
+    }}
+  >
     <h3>No Selection</h3>
     <SelectStation onChange={() => null} />
     <h3>Loading</h3>

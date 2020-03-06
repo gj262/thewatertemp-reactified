@@ -60,6 +60,11 @@ export interface ComparisonItem {
 
 export type ComparisonList = ComparisonItem[];
 
+export interface ComparisonDescription {
+  id: string;
+  label: string;
+}
+
 interface _UserPreferences {
   temperatureScale: TemperatureScale;
 }
