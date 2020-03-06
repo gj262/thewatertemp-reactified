@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { Dispatch } from "redux";
 import { Router, navigate } from "@reach/router";
 import "./TheWaterTemp.css";
 import { RootState } from "./reducers";
@@ -17,11 +18,26 @@ import {
   TemperatureRange
 } from "./types";
 import { DEFAULTS } from "./defaults";
-import { Dispatch } from "redux";
 
 export type TheWaterTempProps = PropsFromDependencyInjection &
   PropsFromStore &
   PropsFromRouting;
+
+export interface TheWaterTempComponentTypes {
+  Header: ComponentTypes["Header"];
+  TemperatureScaleSelector: ComponentTypes["TemperatureScaleSelector"];
+  SelectStation: ComponentTypes["SelectStation"];
+  TemperatureValue: ComponentTypes["TemperatureValue"];
+  TemperatureRange: ComponentTypes["TemperatureRange"];
+}
+
+export interface TheWaterTempActionTypes {
+  loadUserPreferences: ActionTypes["loadUserPreferences"];
+  updateUserPreferences: ActionTypes["updateUserPreferences"];
+  loadStations: ActionTypes["loadStations"];
+  loadLatestTemperature: ActionTypes["loadLatestTemperature"];
+  loadLast24Hours: ActionTypes["loadLast24Hours"];
+}
 
 export class TheWaterTemp extends React.Component<TheWaterTempProps> {
   render() {
@@ -195,9 +211,9 @@ const InjectComponentsAndActions: React.FunctionComponent<PropsFromStore &
 );
 
 interface PropsFromDependencyInjection {
-  actions: ActionTypes;
+  actions: TheWaterTempActionTypes;
   navigateToStation: (station: Station) => void;
-  Components: ComponentTypes;
+  Components: TheWaterTempComponentTypes;
 }
 
 const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {

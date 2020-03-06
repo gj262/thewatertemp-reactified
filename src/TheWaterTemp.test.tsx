@@ -1,8 +1,11 @@
 import React from "react";
 import { render, wait } from "@testing-library/react";
 
-import { TheWaterTemp, TheWaterTempProps } from "./TheWaterTemp";
-import { ComponentTypes } from "./components";
+import {
+  TheWaterTemp,
+  TheWaterTempProps,
+  TheWaterTempComponentTypes
+} from "./TheWaterTemp";
 import { Temperature, TemperatureScale, Station } from "./types";
 
 const userPreferences = {
@@ -61,7 +64,7 @@ function makeMockComponentsWithCallbackTriggers() {
   let temperatureScaleChangeTrigger = (scale: TemperatureScale) => {};
   let stationChangeTrigger = (station: Station) => {};
 
-  const mocks: ComponentTypes = {
+  const mocks: TheWaterTempComponentTypes = {
     Header: ({ right }) => <div>HEADER{right}</div>,
     TemperatureScaleSelector: ({ scale, onChange }) => {
       temperatureScaleChangeTrigger = onChange;
