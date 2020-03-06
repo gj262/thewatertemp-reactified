@@ -53,6 +53,13 @@ export interface TemperatureRange {
   avg: Temperature;
 }
 
+export interface ComparisonItem {
+  regarding: string;
+  range?: TemperatureRange;
+}
+
+export type ComparisonList = ComparisonItem[];
+
 interface _UserPreferences {
   temperatureScale: TemperatureScale;
 }

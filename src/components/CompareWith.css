@@ -1,0 +1,11 @@
+.compare-with > h3 {
+  font-size: var(--label-font-size);
+  font-weight: var(--label-font-weight);
+  text-decoration: underline;
+  margin: 0;
+  margin-bottom: var(--label-padding);
+}
+
+.compare-with > .temperature-range {
+  margin-bottom: var(--app-spacing);
+}

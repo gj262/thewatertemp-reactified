@@ -1,5 +1,6 @@
 body {
   font-family: "Noto Sans", sans-serif;
+  font-size: var(--regular-font-size);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
