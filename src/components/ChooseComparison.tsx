@@ -1,11 +1,11 @@
 import React from "react";
-import { ComparisonDescription } from "../types";
+import { ComparisonDescription, ComparisonIds } from "../types";
 import "./ChooseComparison.css";
 
 interface ChooseComparisonProps {
-  selected: ComparisonDescription;
+  selectedId: ComparisonIds;
   comparisons: ComparisonDescription[];
-  onChange: (id: string) => void;
+  onChange: (id: ComparisonIds) => void;
 }
 
 export type ChooseComparisonComponentType = React.FunctionComponent<
@@ -13,7 +13,7 @@ export type ChooseComparisonComponentType = React.FunctionComponent<
 >;
 
 const ChooseComparisonComponent: ChooseComparisonComponentType = ({
-  selected,
+  selectedId,
   comparisons,
   onChange
 }) => (
@@ -24,8 +24,8 @@ const ChooseComparisonComponent: ChooseComparisonComponentType = ({
     <select
       id="chooseComparison"
       className="choose-comparison"
-      value={selected.id}
-      onChange={e => onChange(e.target.value)}
+      value={selectedId}
+      onChange={e => onChange(e.target.value as ComparisonIds)}
     >
       {comparisons.map(comparison => (
         <option key={comparison.id} value={comparison.id}>

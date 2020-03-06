@@ -61,9 +61,18 @@ export interface ComparisonItem {
 export type ComparisonList = ComparisonItem[];
 
 export interface ComparisonDescription {
-  id: string;
+  id: ComparisonIds;
   label: string;
 }
+
+export enum ComparisonIds {
+  LAST_SEVEN_DAYS = "lastSevenDays",
+  TODAY_IN_PRIOR_YEARS = "todayInPriorYears"
+}
+
+// export const comparisonList: ComparisonList[] = [
+//   {}
+// ]
 
 interface _UserPreferences {
   temperatureScale: TemperatureScale;

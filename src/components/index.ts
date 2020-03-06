@@ -9,6 +9,10 @@ import TemperatureValue, {
 import TemperatureRange, {
   TemperatureRangeComponentType
 } from "./TemperatureRange";
+import ChooseComparison, {
+  ChooseComparisonComponentType
+} from "./ChooseComparison";
+import CompareWith, { CompareWithComponentType } from "./CompareWith";
 
 export interface ComponentTypes {
   Header: HeaderComponentType;
@@ -16,6 +20,8 @@ export interface ComponentTypes {
   SelectStation: SelectStationComponentType;
   TemperatureValue: TemperatureValueComponentType;
   TemperatureRange: TemperatureRangeComponentType;
+  ChooseComparison: ChooseComparisonComponentType;
+  CompareWith: CompareWithComponentType;
 }
 
 export default {
@@ -23,5 +29,7 @@ export default {
   TemperatureScaleSelector,
   SelectStation,
   TemperatureValue,
-  TemperatureRange
+  TemperatureRange,
+  ChooseComparison,
+  CompareWith
 };

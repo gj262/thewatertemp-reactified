@@ -3,16 +3,17 @@ import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import ChooseComparison from "./ChooseComparison";
+import { ComparisonIds } from "../types";
 
 const comparisons = [
-  { id: "last7days", label: "Last 7 days" },
-  { id: "todayInPriorYears", label: "Today in prior years" }
+  { id: ComparisonIds.LAST_SEVEN_DAYS, label: "Last 7 days" },
+  { id: ComparisonIds.TODAY_IN_PRIOR_YEARS, label: "Today in prior years" }
 ];
 
 test("renders", () => {
   const { queryByDisplayValue } = render(
     <ChooseComparison
-      selected={comparisons[1]}
+      selectedId={comparisons[1].id}
       comparisons={comparisons}
       onChange={() => null}
     />
@@ -24,14 +25,14 @@ test("renders", () => {
 test("renders a different comparison when foisted", () => {
   const { queryByDisplayValue, rerender } = render(
     <ChooseComparison
-      selected={comparisons[1]}
+      selectedId={comparisons[1].id}
       comparisons={comparisons}
       onChange={() => null}
     />
   );
   rerender(
     <ChooseComparison
-      selected={comparisons[0]}
+      selectedId={comparisons[0].id}
       comparisons={comparisons}
       onChange={() => null}
     />
@@ -44,7 +45,7 @@ test("hits the change callback", () => {
 
   const { getByDisplayValue } = render(
     <ChooseComparison
-      selected={comparisons[1]}
+      selectedId={comparisons[1].id}
       comparisons={comparisons}
       onChange={onChange}
     />
