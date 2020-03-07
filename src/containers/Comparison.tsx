@@ -7,9 +7,7 @@ import makeActions, { ActionTypes } from "../actions";
 import AllComponents, { ComponentTypes } from "../components";
 import { ComparisonIds, ComparisonDescription } from "../types";
 
-export type ComparisonProps = PropsFromAbove &
-  PropsFromStore &
-  PropsFromDependencyInjection;
+export type ComparisonProps = PropsFromAbove & PropsFromStore & PropsFromDependencyInjection;
 
 export interface PropsFromAbove {
   stationId: string;
@@ -39,11 +37,7 @@ export class Comparison extends React.Component<ComparisonProps> {
 
     return (
       <div className="comparison">
-        <Components.ChooseComparison
-          selectedId={comparisonId}
-          comparisons={this.comparisons}
-          onChange={onComparisonChange}
-        />
+        <Components.ChooseComparison selectedId={comparisonId} comparisons={this.comparisons} onChange={onComparisonChange} />
         <Components.CompareWith list={[]} />
       </div>
     );
@@ -71,10 +65,7 @@ export class Comparison extends React.Component<ComparisonProps> {
   componentDidUpdate(prevProps: ComparisonProps) {
     const { stationId, comparisonId } = this.props;
 
-    if (
-      stationId !== prevProps.stationId ||
-      comparisonId !== prevProps.comparisonId
-    ) {
+    if (stationId !== prevProps.stationId || comparisonId !== prevProps.comparisonId) {
       this.loadComparison();
     }
   }
@@ -82,13 +73,8 @@ export class Comparison extends React.Component<ComparisonProps> {
 
 // Store -> Dependency Injection -> Comparison Container
 
-const InjectComponentsAndActions: React.FunctionComponent<PropsFromAbove &
-  PropsFromStore> = props => (
-  <Comparison
-    {...props}
-    actions={makeActions(props.dispatch, window.localStorage)}
-    Components={AllComponents}
-  />
+const InjectComponentsAndActions: React.FunctionComponent<PropsFromAbove & PropsFromStore> = props => (
+  <Comparison {...props} actions={makeActions(props.dispatch, window.localStorage)} Components={AllComponents} />
 );
 
 interface PropsFromDependencyInjection {
@@ -100,12 +86,12 @@ const mapStateToProps = (state: RootState) => {
   return {};
 };
 
-const InjectStoreData: React.FunctionComponent<PropsFromAbove> = connect(
-  mapStateToProps
-)(InjectComponentsAndActions);
+const InjectStoreData: React.FunctionComponent<PropsFromAbove> = connect(mapStateToProps)(InjectComponentsAndActions);
 
 interface PropsFromStore {
   dispatch: Dispatch;
 }
+
+export type ComparisonContainerType = React.FunctionComponent<PropsFromAbove>;
 
 export default InjectStoreData;

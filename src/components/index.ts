@@ -1,17 +1,9 @@
 import Header, { HeaderComponentType } from "./Header";
-import TemperatureScaleSelector, {
-  TemperatureScaleSelectorComponentType
-} from "./TemperatureScaleSelector";
+import TemperatureScaleSelector, { TemperatureScaleSelectorComponentType } from "./TemperatureScaleSelector";
 import SelectStation, { SelectStationComponentType } from "./SelectStation";
-import TemperatureValue, {
-  TemperatureValueComponentType
-} from "./TemperatureValue";
-import TemperatureRange, {
-  TemperatureRangeComponentType
-} from "./TemperatureRange";
-import ChooseComparison, {
-  ChooseComparisonComponentType
-} from "./ChooseComparison";
+import TemperatureValue, { TemperatureValueComponentType } from "./TemperatureValue";
+import TemperatureRange, { TemperatureRangeComponentType } from "./TemperatureRange";
+import ChooseComparison, { ChooseComparisonComponentType } from "./ChooseComparison";
 import CompareWith, { CompareWithComponentType } from "./CompareWith";
 
 export interface ComponentTypes {

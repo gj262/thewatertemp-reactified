@@ -1,11 +1,7 @@
 import React from "react";
 import { render, wait } from "@testing-library/react";
 
-import {
-  TheWaterTemp,
-  TheWaterTempProps,
-  TheWaterTempComponentTypes
-} from "./TheWaterTemp";
+import { TheWaterTemp, TheWaterTempProps, TheWaterTempComponentTypes, TheWaterTempContainerTypes } from "./TheWaterTemp";
 import { Temperature, TemperatureScale, Station } from "./types";
 
 const userPreferences = {
@@ -14,10 +10,7 @@ const userPreferences = {
 
 function commonAppTest(overrideProps: Partial<TheWaterTempProps>) {
   const mockActions = makeMockActions();
-  const {
-    mockComponents,
-    ...callbackTriggers
-  } = makeMockComponentsWithCallbackTriggers();
+  const { mockComponents, mockContainers, ...callbackTriggers } = makeMockComponentsWithCallbackTriggers();
   const userPreferences = {
     temperatureScale: TemperatureScale.CELSIUS
   };
@@ -27,6 +20,7 @@ function commonAppTest(overrideProps: Partial<TheWaterTempProps>) {
       actions={mockActions}
       dispatch={jest.fn()}
       Components={mockComponents}
+      Containers={mockContainers}
       userPreferences={userPreferences}
       navigateToStation={jest.fn()}
       stationId="22"
@@ -44,6 +38,7 @@ function commonAppTest(overrideProps: Partial<TheWaterTempProps>) {
   return {
     mockActions,
     mockComponents,
+    mockContainers,
     ...callbackTriggers,
     ...renderProps,
     ...overrideProps
@@ -74,8 +69,7 @@ function makeMockComponentsWithCallbackTriggers() {
       stationChangeTrigger = onChange;
       return (
         <div>
-          SELECT STATION {loading && "LOADING"} {station && station.name}{" "}
-          {stations && stations[0].name}
+          SELECT STATION {loading && "LOADING"} {station && station.name} {stations && stations[0].name}
         </div>
       );
     },
@@ -93,10 +87,17 @@ function makeMockComponentsWithCallbackTriggers() {
     )
   };
 
+  const containerMocks: TheWaterTempContainerTypes = {
+    Comparison: () => {
+      return <div>COMPARISON</div>;
+    }
+  };
+
   return {
     getTemperatureScaleChangeTrigger: () => temperatureScaleChangeTrigger,
     getStationChangeTrigger: () => stationChangeTrigger,
-    mockComponents: mocks
+    mockComponents: mocks,
+    mockContainers: containerMocks
   };
 }
 
@@ -135,9 +136,7 @@ test("may display a loading error", () => {
 test("passes down the users temperature scale to display", () => {
   const { getByText } = commonAppTest({});
 
-  expect(
-    getByText(new RegExp("SCALE: " + TemperatureScale.CELSIUS))
-  ).not.toBeNull();
+  expect(getByText(new RegExp("SCALE: " + TemperatureScale.CELSIUS))).not.toBeNull();
 });
 
 test("may update users preferences", () => {
@@ -230,24 +229,15 @@ test("loads the latest temp", () => {
 
 test("may display a loading error for the latest temperature", () => {
   const { getByText } = commonAppTest({
-    errorLoadingLatestTemperature:
-      "No data was found. This product may not be offered at this station at the requested time."
+    errorLoadingLatestTemperature: "No data was found. This product may not be offered at this station at the requested time."
   });
 
-  expect(
-    getByText(
-      "No data was found. This product may not be offered at this station at the requested time."
-    )
-  ).not.toBeNull();
+  expect(getByText("No data was found. This product may not be offered at this station at the requested time.")).not.toBeNull();
 });
 
 test("may display a recorded timestamp for the latest temperature", () => {
   const { getByText } = commonAppTest({
-    latestTemperature: new Temperature(
-      76.1,
-      TemperatureScale.FAHRENHEIT,
-      "2020-03-02 18:42"
-    )
+    latestTemperature: new Temperature(76.1, TemperatureScale.FAHRENHEIT, "2020-03-02 18:42")
   });
 
   expect(getByText(/2020-03-02 18:42/)).not.toBeNull();
@@ -264,16 +254,8 @@ test("may display loading for the latest temperature", () => {
 test("displays the last 24 hour range", () => {
   const { queryByText } = commonAppTest({
     last24Hours: {
-      min: new Temperature(
-        32.8,
-        TemperatureScale.FAHRENHEIT,
-        "2020-03-03 18:42"
-      ),
-      max: new Temperature(
-        34.8,
-        TemperatureScale.FAHRENHEIT,
-        "2020-03-03 18:54"
-      ),
+      min: new Temperature(32.8, TemperatureScale.FAHRENHEIT, "2020-03-03 18:42"),
+      max: new Temperature(34.8, TemperatureScale.FAHRENHEIT, "2020-03-03 18:54"),
       avg: new Temperature(33.8, TemperatureScale.FAHRENHEIT)
     }
   });
@@ -290,7 +272,7 @@ test("loads the last 24 hour range", () => {
 });
 
 test("loads the latest temp & last 24 for a new station", async () => {
-  let { mockActions, mockComponents, rerender, getByText } = commonAppTest({
+  let { mockActions, mockComponents, mockContainers, rerender, getByText } = commonAppTest({
     stationId: "22",
     latestTemperature: new Temperature(12.3456, TemperatureScale.FAHRENHEIT)
   });
@@ -300,6 +282,7 @@ test("loads the latest temp & last 24 for a new station", async () => {
       actions={mockActions}
       dispatch={jest.fn()}
       Components={mockComponents}
+      Containers={mockContainers}
       userPreferences={userPreferences}
       navigateToStation={jest.fn()}
       stationId="33"

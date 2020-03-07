@@ -1,5 +1,5 @@
 import nock from "nock";
-import { loadLastSevenDayComparison } from "./sevenDayComparison";
+import { loadLastSevenDayComparison } from "./lastSevenDayComparison";
 import { ActionTypes, ComparisonIds, Temperature, TemperatureScale } from "../types";
 import { DEFAULTS } from "../defaults";
 

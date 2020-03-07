@@ -10,18 +10,11 @@ import * as fromLatestTemperature from "./reducers/latestTemperature";
 import * as fromLast24Hours from "./reducers/last24Hours";
 import makeActions, { ActionTypes } from "./actions";
 import AllComponents, { ComponentTypes } from "./components";
-import {
-  TemperatureScale,
-  UserPreferences,
-  Station,
-  Temperature,
-  TemperatureRange
-} from "./types";
+import AllContainers, { ContainerTypes } from "./containers";
+import { TemperatureScale, UserPreferences, Station, Temperature, TemperatureRange } from "./types";
 import { DEFAULTS } from "./defaults";
 
-export type TheWaterTempProps = PropsFromDependencyInjection &
-  PropsFromStore &
-  PropsFromRouting;
+export type TheWaterTempProps = PropsFromDependencyInjection & PropsFromStore & PropsFromRouting;
 
 export interface TheWaterTempComponentTypes {
   Header: ComponentTypes["Header"];
@@ -29,6 +22,10 @@ export interface TheWaterTempComponentTypes {
   SelectStation: ComponentTypes["SelectStation"];
   TemperatureValue: ComponentTypes["TemperatureValue"];
   TemperatureRange: ComponentTypes["TemperatureRange"];
+}
+
+export interface TheWaterTempContainerTypes {
+  Comparison: ContainerTypes["Comparison"];
 }
 
 export interface TheWaterTempActionTypes {
@@ -145,22 +142,12 @@ interface StationInfoProps {
   invalidStationId?: string;
 }
 
-const StationInfo: React.FC<StationInfoProps> = ({
-  invalidStationId,
-  station
-}) => {
+const StationInfo: React.FC<StationInfoProps> = ({ invalidStationId, station }) => {
   if (invalidStationId) {
-    return (
-      <span className="error">
-        This is not a valid station ID: {invalidStationId}
-      </span>
-    );
+    return <span className="error">This is not a valid station ID: {invalidStationId}</span>;
   }
   return (
-    <a
-      href={station ? DEFAULTS.LINK_TO_STATION + station.id : "#"}
-      title="Go to this stations home page"
-    >
+    <a href={station ? DEFAULTS.LINK_TO_STATION + station.id : "#"} title="Go to this stations home page">
       Station: {station ? station.id : "loading..."}
     </a>
   );
@@ -171,10 +158,7 @@ interface LatestTemperatureCaptionProps {
   error?: string;
 }
 
-const LatestTemperatureCaption: React.FC<LatestTemperatureCaptionProps> = ({
-  temperature,
-  error
-}) => {
+const LatestTemperatureCaption: React.FC<LatestTemperatureCaptionProps> = ({ temperature, error }) => {
   return (
     <>
       {temperature && <span>Recorded: {temperature?.timestamp}</span>}
@@ -198,15 +182,13 @@ interface PropsFromRouting {
   stationId?: string;
 }
 
-const InjectComponentsAndActions: React.FunctionComponent<PropsFromStore &
-  PropsFromRouting> = props => (
+const InjectComponentsAndActions: React.FunctionComponent<PropsFromStore & PropsFromRouting> = props => (
   <TheWaterTemp
     {...props}
     actions={makeActions(props.dispatch, window.localStorage)}
-    navigateToStation={(station: Station) =>
-      navigate(`/stations/${station.id}`)
-    }
+    navigateToStation={(station: Station) => navigate(`/stations/${station.id}`)}
     Components={AllComponents}
+    Containers={AllContainers}
   />
 );
 
@@ -214,6 +196,7 @@ interface PropsFromDependencyInjection {
   actions: TheWaterTempActionTypes;
   navigateToStation: (station: Station) => void;
   Components: TheWaterTempComponentTypes;
+  Containers: TheWaterTempContainerTypes;
 }
 
 const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {
@@ -223,9 +206,7 @@ const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {
   let stationProps;
 
   if (stations) {
-    const station = stations.find(
-      (station: Station) => station.id === stationId
-    );
+    const station = stations.find((station: Station) => station.id === stationId);
     if (station) {
       stationProps = { stationId, station };
     } else {
@@ -235,25 +216,15 @@ const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {
     stationProps = { stationId };
   }
 
-  const userPreferences = fromUserPreferences.getUserPreferences(
-    state.userPreferences
-  );
+  const userPreferences = fromUserPreferences.getUserPreferences(state.userPreferences);
 
-  let latestTemperature = fromLatestTemperature.getLatestTemperature(
-    state.latestTemperature,
-    stationId
-  );
+  let latestTemperature = fromLatestTemperature.getLatestTemperature(state.latestTemperature, stationId);
 
-  let last24Hours = fromLast24Hours.getLast24Hours(
-    state.last24Hours,
-    stationId
-  );
+  let last24Hours = fromLast24Hours.getLast24Hours(state.last24Hours, stationId);
 
   if (userPreferences) {
     if (latestTemperature) {
-      latestTemperature = latestTemperature.usingScale(
-        userPreferences.temperatureScale
-      );
+      latestTemperature = latestTemperature.usingScale(userPreferences.temperatureScale);
     }
     if (last24Hours) {
       last24Hours = {
@@ -271,17 +242,12 @@ const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {
     errorLoadingStations: fromStations.getFailureMessage(state.stations),
     ...stationProps,
     latestTemperature,
-    errorLoadingLatestTemperature: fromLatestTemperature.getFailureMessage(
-      state.latestTemperature,
-      stationId
-    ),
+    errorLoadingLatestTemperature: fromLatestTemperature.getFailureMessage(state.latestTemperature, stationId),
     last24Hours
   };
 };
 
-const InjectStoreData: React.FunctionComponent<PropsFromRouting> = connect(
-  mapStateToProps
-)(InjectComponentsAndActions);
+const InjectStoreData: React.FunctionComponent<PropsFromRouting> = connect(mapStateToProps)(InjectComponentsAndActions);
 
 interface PropsFromStore {
   dispatch: Dispatch;

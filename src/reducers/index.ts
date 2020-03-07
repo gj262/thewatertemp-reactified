@@ -5,17 +5,20 @@ import userPreferences from "./userPreferences";
 import stations, { StationsState } from "./stations";
 import latestTemperature, { LatestTemperatureState } from "./latestTemperature";
 import last24Hours, { Last24HoursState } from "./last24Hours";
+import comparison, { ComparisonState } from "./comparison";
 
 export interface RootState {
   userPreferences: UserPreferences;
   stations: StationsState;
   latestTemperature: LatestTemperatureState;
   last24Hours: Last24HoursState;
+  comparison: ComparisonState;
 }
 
 export default combineReducers({
   userPreferences,
   stations,
   latestTemperature,
-  last24Hours
+  last24Hours,
+  comparison
 });
