@@ -5,11 +5,7 @@ import { cleanData, min, max, avg } from "./fetchData";
 import { ActionTypes, ComparisonIds, Temperature } from "../types";
 import { DEFAULTS } from "../defaults";
 
-export function loadLastSevenDayComparison(
-  dispatch: Dispatch,
-  stationId: string,
-  latestStationTime: Date
-): Promise<void> {
+export function loadLastSevenDayComparison(dispatch: Dispatch, stationId: string, latestStationTime: Date): Promise<void> {
   const meta = { stationId, comparisonId: ComparisonIds.LAST_SEVEN_DAYS };
 
   dispatch({
@@ -18,42 +14,33 @@ export function loadLastSevenDayComparison(
   });
 
   const stationNowMS = latestStationTime.valueOf();
-  var beginMS = stationNowMS - 7 * 24 * 60 * 60 * 1000;
-  var beginDate = new Date(beginMS);
+  const beginMS = stationNowMS - 7 * 24 * 60 * 60 * 1000;
+  const beginDate = new Date(beginMS);
 
-  var beginStr =
-    beginDate.getFullYear() +
-    (beginDate.getMonth() + 1 + "").padStart(2, "0") +
-    (beginDate.getDate() + "").padStart(2, "0");
+  const beginStr =
+    beginDate.getFullYear() + (beginDate.getMonth() + 1 + "").padStart(2, "0") + (beginDate.getDate() + "").padStart(2, "0");
 
   const dispatchFetchFailed = _dispatchFetchFailed.bind({}, dispatch, meta);
 
   return axios
-    .get(
-      DEFAULTS.NOAA_API_HOSTNAME +
-        DEFAULTS.TEMPERATURE_DATA_PATH +
-        stationId +
-        "&begin_date=" +
-        beginStr +
-        "&range=168"
-    )
+    .get(DEFAULTS.NOAA_API_HOSTNAME + DEFAULTS.TEMPERATURE_DATA_PATH + stationId + "&begin_date=" + beginStr + "&range=168")
     .then(response => {
       if (response.data && response.data.error && response.data.error.message) {
         dispatchFetchFailed(response.data.error.message);
         return;
       }
 
-      if (
-        !response.data ||
-        !response.data.data ||
-        !Array.isArray(response.data.data) ||
-        response.data.data.length === 0
-      ) {
-        dispatchFetchFailed("No data was returned");
+      if (!response.data || !response.data.data || !Array.isArray(response.data.data) || response.data.data.length === 0) {
+        dispatchFetchFailed("Bad response");
         return;
       }
 
-      const data = cleanData(response.data.data);
+      return cleanData(response.data.data);
+    })
+    .then((data: Temperature[] | undefined) => {
+      if (!data) {
+        return;
+      }
 
       if (data.length === 0) {
         dispatchFetchFailed("The data is unuseable");
@@ -73,16 +60,12 @@ export function loadLastSevenDayComparison(
           (dayDate.getDate() + "").padStart(2, "0");
 
         const thisData = data.filter(
-          (temperature: Temperature) =>
-            temperature.timestamp &&
-            temperature.timestamp.indexOf(dateStr) === 0
+          (temperature: Temperature) => temperature.timestamp && temperature.timestamp.indexOf(dateStr) === 0
         );
 
         series.push({
           regarding: dayOfWeek,
-          range: data.length
-            ? { min: min(thisData), max: max(thisData), avg: avg(thisData) }
-            : null
+          range: data.length ? { min: min(thisData), max: max(thisData), avg: avg(thisData) } : null
         });
       }
 
@@ -93,17 +76,12 @@ export function loadLastSevenDayComparison(
       });
     })
     .catch(error => {
-      console.log(error);
       console.log(error.toJSON());
       dispatchFetchFailed(error.toJSON().message);
     });
 }
 
-function _dispatchFetchFailed(
-  dispatch: Dispatch,
-  meta: { stationId: string; comparisonId: ComparisonIds },
-  message: string
-) {
+function _dispatchFetchFailed(dispatch: Dispatch, meta: { stationId: string; comparisonId: ComparisonIds }, message: string) {
   dispatch({
     type: ActionTypes.FAILED_TO_LOAD_COMPARISON,
     error: new Error(message),

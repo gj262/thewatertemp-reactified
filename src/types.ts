@@ -23,24 +23,10 @@ export class Temperature {
     if (this.scale === scale) {
       return this;
     }
-    if (
-      this.scale === TemperatureScale.CELSIUS &&
-      scale === TemperatureScale.FAHRENHEIT
-    ) {
-      return new Temperature(
-        this.value * 1.8 + 32,
-        TemperatureScale.FAHRENHEIT,
-        this.timestamp
-      );
-    } else if (
-      this.scale === TemperatureScale.FAHRENHEIT &&
-      scale === TemperatureScale.CELSIUS
-    ) {
-      return new Temperature(
-        (this.value - 32) / 1.8,
-        TemperatureScale.CELSIUS,
-        this.timestamp
-      );
+    if (this.scale === TemperatureScale.CELSIUS && scale === TemperatureScale.FAHRENHEIT) {
+      return new Temperature(this.value * 1.8 + 32, TemperatureScale.FAHRENHEIT, this.timestamp);
+    } else if (this.scale === TemperatureScale.FAHRENHEIT && scale === TemperatureScale.CELSIUS) {
+      return new Temperature((this.value - 32) / 1.8, TemperatureScale.CELSIUS, this.timestamp);
     }
 
     throw new Error("Unhandled temp conversion");
@@ -94,6 +80,8 @@ export enum ActionTypes {
   FAILED_TO_LOAD_LAST_24_HOURS = "FAILED_TO_LOAD_LAST_24_HOURS",
   LOADING_COMPARISON = "LOADING_COMPARISON",
   COMPARISON_LOADED = "COMPARISON_LOADED",
+  PARTIAL_COMPARISON_LOAD = "PARTIAL_COMPARISON_LOAD",
+  COMPLETED_COMPARISON_LOAD = "COMPLETED_COMPARISON_LOAD",
   FAILED_TO_LOAD_COMPARISON = "FAILED_TO_LOAD_COMPARISON"
 }
 

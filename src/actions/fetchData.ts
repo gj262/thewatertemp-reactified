@@ -1,12 +1,6 @@
-import { Dispatch } from "redux";
 import axios from "axios";
-import {
-  Temperature,
-  ActionTypes,
-  TemperatureScale,
-  FetchDataStageTypes,
-  FetchDataMeta
-} from "../types";
+import { Dispatch } from "redux";
+import { Temperature, TemperatureScale, FetchDataStageTypes, FetchDataMeta } from "../types";
 import { DEFAULTS } from "../defaults";
 
 export function fetchData(
@@ -21,69 +15,42 @@ export function fetchData(
     meta
   });
 
-  const dispatchFetchFailed = _dispatchFetchFailed.bind(
-    {},
-    dispatch,
-    meta,
-    stageTypes.failed
-  );
-
   return axios
-    .get(
-      DEFAULTS.NOAA_API_HOSTNAME +
-        DEFAULTS.TEMPERATURE_DATA_PATH +
-        meta.stationId +
-        "&" +
-        path.join("&")
-    )
+    .get(DEFAULTS.NOAA_API_HOSTNAME + DEFAULTS.TEMPERATURE_DATA_PATH + meta.stationId + "&" + path.join("&"))
     .then(response => {
       if (response.data && response.data.error && response.data.error.message) {
-        dispatchFetchFailed(response.data.error.message);
-        return;
+        throw new Error(response.data.error.message);
       }
 
-      if (
-        !response.data ||
-        !response.data.data ||
-        !Array.isArray(response.data.data) ||
-        response.data.data.length === 0
-      ) {
-        dispatchFetchFailed("No data was returned");
-        return;
+      if (!response.data || !response.data.data || !Array.isArray(response.data.data) || response.data.data.length === 0) {
+        throw new Error("No data was returned");
       }
 
-      const data = cleanData(response.data.data);
-
+      return response.data.data;
+    })
+    .then(cleanData)
+    .then(data => {
       if (data.length === 0) {
-        dispatchFetchFailed("The data is unuseable");
-        return;
+        throw new Error("The data is unuseable");
       }
 
       dispatch({
         type: stageTypes.fetched,
-        payload: range
-          ? { data, min: min(data), max: max(data), avg: avg(data) }
-          : { data: data[0] },
+        payload: range ? { data, min: min(data), max: max(data), avg: avg(data) } : { data: data[0] },
         meta
       });
     })
     .catch(error => {
-      console.log(error.toJSON());
-      dispatchFetchFailed(error.toJSON().message);
+      try {
+        console.log(error.toJSON());
+        error = new Error(error.toJSON().message);
+      } catch (e) {}
+      dispatch({
+        type: stageTypes.failed,
+        error,
+        meta
+      });
     });
-}
-
-function _dispatchFetchFailed(
-  dispatch: Dispatch,
-  meta: FetchDataMeta,
-  type: ActionTypes,
-  message: string
-) {
-  dispatch({
-    type,
-    error: new Error(message),
-    meta
-  });
 }
 
 export function cleanData(data: any[]): Temperature[] {
@@ -124,9 +91,5 @@ export function max(data: Temperature[]) {
 }
 
 export function avg(data: Temperature[]) {
-  return new Temperature(
-    data.reduce((accumulator, current) => accumulator + current.value, 0) /
-      data.length,
-    data[0].scale
-  );
+  return new Temperature(data.reduce((accumulator, current) => accumulator + current.value, 0) / data.length, data[0].scale);
 }
