@@ -2,7 +2,7 @@ import axios from "axios";
 import { Dispatch } from "redux";
 
 import { cleanData, min, max, avg } from "./fetchData";
-import { ActionTypes, ComparisonIds, Temperature } from "../types";
+import { ActionTypes, ComparisonIds, Temperature, ComparisonList } from "../types";
 import { DEFAULTS } from "../defaults";
 
 export function loadLastSevenDayComparison(dispatch: Dispatch, stationId: string, latestStationTime: Date): Promise<void> {
@@ -47,7 +47,7 @@ export function loadLastSevenDayComparison(dispatch: Dispatch, stationId: string
         return;
       }
 
-      const series = [];
+      const series: ComparisonList = [];
       for (var day = 1; day <= 7; day++) {
         var dayMS = stationNowMS - day * 24 * 60 * 60 * 1000;
         var dayDate = new Date(dayMS);
@@ -65,7 +65,7 @@ export function loadLastSevenDayComparison(dispatch: Dispatch, stationId: string
 
         series.push({
           regarding: dayOfWeek,
-          range: data.length ? { min: min(thisData), max: max(thisData), avg: avg(thisData) } : null
+          range: data.length ? { min: min(thisData), max: max(thisData), avg: avg(thisData) } : undefined
         });
       }
 

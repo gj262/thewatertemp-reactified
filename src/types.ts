@@ -56,10 +56,6 @@ export enum ComparisonIds {
   TODAY_IN_PRIOR_YEARS = "todayInPriorYears"
 }
 
-// export const comparisonList: ComparisonList[] = [
-//   {}
-// ]
-
 interface _UserPreferences {
   temperatureScale: TemperatureScale;
 }
@@ -148,6 +144,37 @@ export interface FailedToLoadLast24HoursAction {
   meta: { stationId: string };
 }
 
+export interface LoadingComparisonAction {
+  type: ActionTypes.LOADING_COMPARISON;
+  meta: { stationId: string; comparisonId: ComparisonIds };
+}
+
+export interface ComparisonLoadedAction {
+  type: ActionTypes.COMPARISON_LOADED;
+  payload: {
+    data: ComparisonList;
+  };
+  meta: { stationId: string; comparisonId: ComparisonIds };
+}
+
+export interface PartialComparisonLoadAction {
+  type: ActionTypes.PARTIAL_COMPARISON_LOAD;
+  payload: ComparisonItem;
+  meta: { stationId: string; comparisonId: ComparisonIds };
+}
+
+export interface CompletedComparisonLoadAction {
+  type: ActionTypes.COMPLETED_COMPARISON_LOAD;
+  payload: { endDueTo: string };
+  meta: { stationId: string; comparisonId: ComparisonIds };
+}
+
+export interface FailedToLoadComparisonAction {
+  type: ActionTypes.FAILED_TO_LOAD_COMPARISON;
+  error: Error;
+  meta: { stationId: string; comparisonId: ComparisonIds };
+}
+
 export type Action =
   | UserPreferencesLoadedAction
   | UserPreferencesUpdatedAction
@@ -159,7 +186,12 @@ export type Action =
   | FailedToLoadLatestTemperatureAction
   | LoadingLast24HoursAction
   | Last24HoursLoadedAction
-  | FailedToLoadLast24HoursAction;
+  | FailedToLoadLast24HoursAction
+  | LoadingComparisonAction
+  | ComparisonLoadedAction
+  | PartialComparisonLoadAction
+  | CompletedComparisonLoadAction
+  | FailedToLoadComparisonAction;
 
 export interface FetchDataStageTypes {
   loading: ActionTypes;
