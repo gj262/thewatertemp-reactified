@@ -9,7 +9,7 @@ export function loadTodayInPriorYears(
   dispatch: Dispatch,
   stationId: string,
   latestStationTime: Date,
-  endAfter: number = 3
+  endAfter: number = 5
 ): AxiosPromise {
   const meta = { stationId, comparisonId: ComparisonIds.TODAY_IN_PRIOR_YEARS };
 
@@ -62,7 +62,7 @@ export function loadTodayInPriorYears(
       if (consecutiveFailingYears.length >= endAfter) {
         dispatch({
           type: ActionTypes.COMPLETED_COMPARISON_LOAD,
-          payload: { endDueTo: `Tried ${consecutiveFailingYears.join(", ")}` },
+          payload: { endReason: `Tried ${consecutiveFailingYears.join(", ")}` },
           meta
         });
       } else {

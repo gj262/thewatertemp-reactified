@@ -14,17 +14,13 @@
 .the-water-temperature .select-station,
 .the-water-temperature > a,
 .the-water-temperature > h2,
-.the-water-temperature > span {
+.the-water-temperature > span,
+.the-water-temperature select.choose-comparison {
   margin-bottom: var(--app-spacing);
 }
 
 .the-water-temperature > h2.latest-reading {
   margin-bottom: 0;
-}
-
-.the-water-temperature > a,
-.the-water-temperature > span {
-  display: block;
 }
 
 .the-water-temperature .select-station input,
@@ -34,7 +30,9 @@
 }
 
 .the-water-temperature > a,
-.the-water-temperature > span {
+.the-water-temperature > span,
+.the-water-temperature .compare-with {
+  display: block;
   padding-left: var(--label-padding);
 }
 
@@ -45,6 +43,11 @@ h2 {
   font-weight: var(--label-font-weight);
   background-color: var(--label-background-color);
   border-radius: var(--label-border-radius);
+}
+
+.the-water-temperature select.choose-comparison {
+  height: 45px;
+  width: 100%;
 }
 
 .loading {

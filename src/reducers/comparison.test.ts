@@ -113,7 +113,7 @@ it("partially loads more", () => {
 const completedLoad: Action = {
   type: ActionTypes.COMPLETED_COMPARISON_LOAD,
   payload: {
-    endDueTo: "Tried years 2017, 2016, 2015"
+    endReason: "Tried years 2017, 2016, 2015"
   },
   meta: priorYearMeta
 };
@@ -129,7 +129,7 @@ it("completes partial loading", () => {
     secondPriorYearLoad.payload
   ]);
   expect(isLoading(completedState, testStationId, ComparisonIds.TODAY_IN_PRIOR_YEARS)).toBe(false);
-  expect(getEndReason(completedState, testStationId, ComparisonIds.TODAY_IN_PRIOR_YEARS)).toBe(completedLoad.payload.endDueTo);
+  expect(getEndReason(completedState, testStationId, ComparisonIds.TODAY_IN_PRIOR_YEARS)).toBe(completedLoad.payload.endReason);
 });
 
 const failure: Action = {
@@ -176,4 +176,29 @@ it("refresh is not loading 4", () => {
     firstPriorYearLoad
   );
   expect(isLoading(refreshState, testStationId, ComparisonIds.TODAY_IN_PRIOR_YEARS)).toBe(false);
+});
+
+it("refresh updates data", () => {
+  const refreshState = reducer(
+    reducer(reducer(reducer(reducer({}, priorYearLoading), firstPriorYearLoad), secondPriorYearLoad), completedLoad),
+    priorYearLoading
+  );
+  expect(getComparison(refreshState, testStationId, ComparisonIds.TODAY_IN_PRIOR_YEARS)).toStrictEqual([
+    firstPriorYearLoad.payload,
+    secondPriorYearLoad.payload
+  ]);
+});
+
+it("refresh updates data 2", () => {
+  const refreshState = reducer(
+    reducer(
+      reducer(reducer(reducer(reducer({}, priorYearLoading), firstPriorYearLoad), secondPriorYearLoad), completedLoad),
+      priorYearLoading
+    ),
+    firstPriorYearLoad
+  );
+  expect(getComparison(refreshState, testStationId, ComparisonIds.TODAY_IN_PRIOR_YEARS)).toStrictEqual([
+    firstPriorYearLoad.payload,
+    secondPriorYearLoad.payload
+  ]);
 });

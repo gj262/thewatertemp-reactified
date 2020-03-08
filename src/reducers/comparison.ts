@@ -46,7 +46,21 @@ function comparison(state: ComparisonState = {}, action: Action): ComparisonStat
     case ActionTypes.PARTIAL_COMPARISON_LOAD:
       stationState = state[action.meta.stationId] || {};
       comparisonState = stationState[action.meta.comparisonId] || {};
-      comparisonState = { data: [...(comparisonState.data || []), action.payload], isLoading: !!comparisonState.isLoading };
+
+      let update = false;
+      let data = comparisonState.data || [];
+      data = data.map(item => {
+        if (item.regarding === action.payload.regarding) {
+          update = true;
+          return action.payload;
+        }
+        return item;
+      });
+      if (!update) {
+        data = [...data, action.payload];
+      }
+
+      comparisonState = { data, isLoading: !!comparisonState.isLoading };
       stationState = {
         ...stationState,
         [action.meta.comparisonId]: comparisonState
@@ -59,7 +73,7 @@ function comparison(state: ComparisonState = {}, action: Action): ComparisonStat
     case ActionTypes.COMPLETED_COMPARISON_LOAD:
       stationState = state[action.meta.stationId] || {};
       comparisonState = stationState[action.meta.comparisonId] || {};
-      comparisonState = { data: comparisonState.data, endReason: action.payload.endDueTo, isLoading: false };
+      comparisonState = { data: comparisonState.data, endReason: action.payload.endReason, isLoading: false };
       stationState = {
         ...stationState,
         [action.meta.comparisonId]: comparisonState

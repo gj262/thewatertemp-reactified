@@ -6,29 +6,25 @@ import "./CompareWith.css";
 interface CompareWithProps {
   list: ComparisonList;
   isLoading?: boolean;
-  endDueTo?: string;
+  endReason?: string;
 }
 
-export type CompareWithComponentType = React.FunctionComponent<
-  CompareWithProps
->;
+export type CompareWithComponentType = React.FunctionComponent<CompareWithProps>;
 
-const CompareWith: CompareWithComponentType = ({
-  list,
-  isLoading = false,
-  endDueTo
-}) => (
+const CompareWith: CompareWithComponentType = ({ list, isLoading = false, endReason }) => (
   <span className="compare-with">
     {list.map((item: ComparisonItem, idx) => (
       <React.Fragment key={item.regarding}>
         <h3>{item.regarding}</h3>
-        <TemperatureRangeComponent
-          range={item.range}
-          isLoading={idx === list.length - 1 && !item.range}
-        />
+        <TemperatureRangeComponent range={item.range} isLoading={idx === list.length - 1 && !item.range} />
       </React.Fragment>
     ))}
-    {endDueTo}
+    {endReason && (
+      <>
+        <h3>No more data found:</h3>
+        {endReason}
+      </>
+    )}
   </span>
 );
 

@@ -165,7 +165,7 @@ export interface PartialComparisonLoadAction {
 
 export interface CompletedComparisonLoadAction {
   type: ActionTypes.COMPLETED_COMPARISON_LOAD;
-  payload: { endDueTo: string };
+  payload: { endReason: string };
   meta: { stationId: string; comparisonId: ComparisonIds };
 }
 

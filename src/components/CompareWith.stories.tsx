@@ -68,9 +68,6 @@ export const WithGap = () => (
 
 export const ExplainDoneness = () => (
   <Wrap>
-    <CompareWith
-      list={gaps}
-      endDueTo="Years 2015, 2014, 2013 returned no data"
-    />
+    <CompareWith list={gaps} endReason="Years 2015, 2014, 2013 returned no data" />
   </Wrap>
 );

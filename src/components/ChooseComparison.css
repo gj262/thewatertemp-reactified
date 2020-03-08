@@ -1,7 +1,6 @@
 select.choose-comparison {
   font-size: var(--label-font-size);
   font-weight: var(--label-font-weight);
-  padding: var(--label-padding);
   border: var(--input-border);
   border-radius: var(--label-border-radius);
 }

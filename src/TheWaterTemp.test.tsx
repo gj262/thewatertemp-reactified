@@ -2,7 +2,7 @@ import React from "react";
 import { render, wait } from "@testing-library/react";
 
 import { TheWaterTemp, TheWaterTempProps, TheWaterTempComponentTypes, TheWaterTempContainerTypes } from "./TheWaterTemp";
-import { Temperature, TemperatureScale, Station } from "./types";
+import { Temperature, TemperatureScale, Station, ComparisonIds } from "./types";
 
 const userPreferences = {
   temperatureScale: TemperatureScale.CELSIUS
@@ -22,7 +22,7 @@ function commonAppTest(overrideProps: Partial<TheWaterTempProps>) {
       Components={mockComponents}
       Containers={mockContainers}
       userPreferences={userPreferences}
-      navigateToStation={jest.fn()}
+      addRoutingState={jest.fn()}
       stationId="22"
       loadingStations={false}
       stations={null}
@@ -30,6 +30,7 @@ function commonAppTest(overrideProps: Partial<TheWaterTempProps>) {
       latestTemperature={null}
       errorLoadingLatestTemperature={null}
       last24Hours={null}
+      comparisonId={ComparisonIds.LAST_SEVEN_DAYS}
       path=""
       {...overrideProps}
     />
@@ -87,15 +88,19 @@ function makeMockComponentsWithCallbackTriggers() {
     )
   };
 
+  let comparisonChangeTrigger = (comarisonId: ComparisonIds) => {};
+
   const containerMocks: TheWaterTempContainerTypes = {
-    Comparison: () => {
-      return <div>COMPARISON</div>;
+    Comparison: ({ onComparisonChange, latestStationTime }) => {
+      comparisonChangeTrigger = onComparisonChange;
+      return <div>COMPARISON {latestStationTime.valueOf()}</div>;
     }
   };
 
   return {
     getTemperatureScaleChangeTrigger: () => temperatureScaleChangeTrigger,
     getStationChangeTrigger: () => stationChangeTrigger,
+    getComparisonChangeTrigger: () => comparisonChangeTrigger,
     mockComponents: mocks,
     mockContainers: containerMocks
   };
@@ -179,16 +184,25 @@ test("passes the stations list", () => {
 });
 
 test("may update the station", () => {
-  const navigateToStation = jest.fn();
-  const { getStationChangeTrigger } = commonAppTest({ navigateToStation });
+  const addRoutingState = jest.fn();
+  const { getStationChangeTrigger } = commonAppTest({ addRoutingState });
 
-  getStationChangeTrigger()({ name: "Elsewhere", id: "22" });
+  getStationChangeTrigger()({ name: "Elsewhere", id: "33" });
 
-  expect(navigateToStation).toBeCalledTimes(1);
-  expect(navigateToStation.mock.calls[0][0]).toStrictEqual({
-    name: "Elsewhere",
-    id: "22"
-  });
+  expect(addRoutingState).toBeCalledTimes(1);
+  expect(addRoutingState.mock.calls[0][0]).toStrictEqual("33");
+  expect(addRoutingState.mock.calls[0][1]).toStrictEqual(ComparisonIds.LAST_SEVEN_DAYS);
+});
+
+test("may update the comparison", () => {
+  const addRoutingState = jest.fn();
+  const { getComparisonChangeTrigger } = commonAppTest({ addRoutingState });
+
+  getComparisonChangeTrigger()(ComparisonIds.TODAY_IN_PRIOR_YEARS);
+
+  expect(addRoutingState).toBeCalledTimes(1);
+  expect(addRoutingState.mock.calls[0][0]).toStrictEqual("22");
+  expect(addRoutingState.mock.calls[0][1]).toStrictEqual(ComparisonIds.TODAY_IN_PRIOR_YEARS);
 });
 
 test("should link to the station", () => {
@@ -284,7 +298,7 @@ test("loads the latest temp & last 24 for a new station", async () => {
       Components={mockComponents}
       Containers={mockContainers}
       userPreferences={userPreferences}
-      navigateToStation={jest.fn()}
+      addRoutingState={jest.fn()}
       stationId="33"
       loadingStations={false}
       stations={null}
@@ -292,6 +306,7 @@ test("loads the latest temp & last 24 for a new station", async () => {
       latestTemperature={new Temperature(76.1, TemperatureScale.FAHRENHEIT)}
       errorLoadingLatestTemperature={null}
       last24Hours={null}
+      comparisonId={ComparisonIds.LAST_SEVEN_DAYS}
       path=""
     />
   );
@@ -300,4 +315,12 @@ test("loads the latest temp & last 24 for a new station", async () => {
 
   expect(mockActions.loadLatestTemperature).toBeCalledTimes(2);
   expect(mockActions.loadLast24Hours).toBeCalledTimes(2);
+});
+
+test("The time passed to comparison is based on the latest recording", () => {
+  const { getByText } = commonAppTest({
+    latestTemperature: new Temperature(55.5, TemperatureScale.FAHRENHEIT, "2020-03-06 08:30")
+  });
+
+  expect(getByText(/COMPARISON\s+1583512200/)).not.toBeNull();
 });

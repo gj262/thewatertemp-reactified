@@ -11,7 +11,7 @@ import * as fromLast24Hours from "./reducers/last24Hours";
 import makeActions, { ActionTypes } from "./actions";
 import AllComponents, { ComponentTypes } from "./components";
 import AllContainers, { ContainerTypes } from "./containers";
-import { TemperatureScale, UserPreferences, Station, Temperature, TemperatureRange } from "./types";
+import { TemperatureScale, UserPreferences, Station, Temperature, TemperatureRange, ComparisonIds } from "./types";
 import { DEFAULTS } from "./defaults";
 
 export type TheWaterTempProps = PropsFromDependencyInjection & PropsFromStore & PropsFromRouting;
@@ -40,6 +40,7 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
   render() {
     const {
       Components,
+      Containers,
       userPreferences,
       loadingStations,
       stations,
@@ -48,7 +49,9 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
       invalidStationId,
       latestTemperature,
       errorLoadingLatestTemperature,
-      last24Hours
+      last24Hours,
+      stationId,
+      comparisonId
     } = this.props;
 
     if (!userPreferences) {
@@ -96,6 +99,15 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
           />
           <h2>Over the last 24 hours:</h2>
           <Components.TemperatureRange range={last24Hours || undefined} />
+          <h2>Compare to:</h2>
+          <Containers.Comparison
+            stationId={stationId}
+            comparisonId={comparisonId}
+            latestStationTime={
+              latestTemperature && latestTemperature.timestamp ? new Date(latestTemperature.timestamp) : new Date()
+            }
+            onComparisonChange={this.onComparisonChange}
+          />
         </div>
       </div>
     );
@@ -122,9 +134,15 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
   };
 
   onStationChange = (station: Station) => {
-    const { navigateToStation } = this.props;
+    const { addRoutingState, comparisonId } = this.props;
 
-    navigateToStation(station);
+    addRoutingState(station.id, comparisonId);
+  };
+
+  onComparisonChange = (comparisonId: ComparisonIds) => {
+    const { addRoutingState, stationId } = this.props;
+
+    addRoutingState(stationId, comparisonId);
   };
 
   componentDidUpdate(prevProps: TheWaterTempProps) {
@@ -173,28 +191,34 @@ const LatestTemperatureCaption: React.FC<LatestTemperatureCaptionProps> = ({ tem
 const WithRouting: React.FunctionComponent = props => (
   <Router>
     <InjectStoreData path="/" {...props} />
-    <InjectStoreData path="/stations/:stationId" {...props} />
+    <InjectStoreData path="/stations/:stationId/compare/:comparisonId" {...props} />
   </Router>
 );
 
 interface PropsFromRouting {
   path: string;
   stationId?: string;
+  comparisonId?: ComparisonIds;
 }
 
-const InjectComponentsAndActions: React.FunctionComponent<PropsFromStore & PropsFromRouting> = props => (
-  <TheWaterTemp
-    {...props}
-    actions={makeActions(props.dispatch, window.localStorage)}
-    navigateToStation={(station: Station) => navigate(`/stations/${station.id}`)}
-    Components={AllComponents}
-    Containers={AllContainers}
-  />
-);
+const InjectComponentsAndActions: React.FunctionComponent<PropsFromStore & PropsFromRouting> = props => {
+  const addRoutingState = (stationId: string, comparisonId: ComparisonIds) =>
+    navigate(`/stations/${stationId}/compare/${comparisonId}`);
+
+  return (
+    <TheWaterTemp
+      {...props}
+      actions={makeActions(props.dispatch, window.localStorage)}
+      addRoutingState={addRoutingState}
+      Components={AllComponents}
+      Containers={AllContainers}
+    />
+  );
+};
 
 interface PropsFromDependencyInjection {
   actions: TheWaterTempActionTypes;
-  navigateToStation: (station: Station) => void;
+  addRoutingState: (stationId: string, comparisonId: ComparisonIds) => void;
   Components: TheWaterTempComponentTypes;
   Containers: TheWaterTempContainerTypes;
 }
@@ -235,6 +259,8 @@ const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {
     }
   }
 
+  const comparisonId = ownProps.comparisonId || DEFAULTS.COMPARISON_ID;
+
   return {
     userPreferences,
     loadingStations: fromStations.isLoading(state.stations),
@@ -243,7 +269,8 @@ const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {
     ...stationProps,
     latestTemperature,
     errorLoadingLatestTemperature: fromLatestTemperature.getFailureMessage(state.latestTemperature, stationId),
-    last24Hours
+    last24Hours,
+    comparisonId
   };
 };
 
@@ -261,6 +288,7 @@ interface PropsFromStore {
   latestTemperature: Temperature | null;
   errorLoadingLatestTemperature: string | null;
   last24Hours: TemperatureRange | null;
+  comparisonId: ComparisonIds;
 }
 
 export default WithRouting;

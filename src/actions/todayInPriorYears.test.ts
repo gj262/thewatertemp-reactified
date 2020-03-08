@@ -101,7 +101,7 @@ it("finishes", async () => {
   expect(dispatch.mock.calls[3][0]).toStrictEqual({
     type: ActionTypes.COMPLETED_COMPARISON_LOAD,
     payload: {
-      endDueTo: "Tried 2017, 2016"
+      endReason: "Tried 2017, 2016"
     },
     meta: {
       stationId: testStationId,
@@ -159,7 +159,7 @@ it("handles gaps", async () => {
   expect(dispatch.mock.calls[4][0]).toStrictEqual({
     type: ActionTypes.COMPLETED_COMPARISON_LOAD,
     payload: {
-      endDueTo: "Tried 2016, 2015"
+      endReason: "Tried 2016, 2015"
     },
     meta: {
       stationId: testStationId,
