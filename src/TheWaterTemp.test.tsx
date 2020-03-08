@@ -319,8 +319,8 @@ test("loads the latest temp & last 24 for a new station", async () => {
 
 test("The time passed to comparison is based on the latest recording", () => {
   const { getByText } = commonAppTest({
-    latestTemperature: new Temperature(55.5, TemperatureScale.FAHRENHEIT, "2020-03-06 08:30")
+    latestTemperature: new Temperature(55.5, TemperatureScale.FAHRENHEIT, "2020-03-06 08:30 UTC")
   });
 
-  expect(getByText(/COMPARISON\s+1583512200/)).not.toBeNull();
+  expect(getByText(/COMPARISON\s+1583483400000/)).not.toBeNull();
 });
