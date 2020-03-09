@@ -15,7 +15,8 @@
 .the-water-temperature > a,
 .the-water-temperature > h2,
 .the-water-temperature > span,
-.the-water-temperature select.choose-comparison {
+.the-water-temperature select.choose-comparison,
+.the-water-temperature .comparison {
   margin-bottom: var(--app-spacing);
 }
 
@@ -31,7 +32,8 @@
 
 .the-water-temperature > a,
 .the-water-temperature > span,
-.the-water-temperature .compare-with {
+.the-water-temperature .compare-with,
+.the-water-temperature footer {
   display: block;
   padding-left: var(--label-padding);
 }

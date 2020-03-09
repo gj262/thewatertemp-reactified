@@ -12,4 +12,4 @@ It is designed to work on small screens i.e. phones.
 
 ## Motivation
 
-This is primarily an exercise in a modern web application with React+Typescript.
+This is primarily an exercise in developing a modern web application with React+Typescript.

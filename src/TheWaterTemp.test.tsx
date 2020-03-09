@@ -85,7 +85,8 @@ function makeMockComponentsWithCallbackTriggers() {
         <div>Avg: {range ? range.avg.value : "--.-"} </div>
         <div>Max: {range ? range.max.value : "--.-"} </div>
       </>
-    )
+    ),
+    Footer: () => <div>FOOTER</div>
   };
 
   let comparisonChangeTrigger = (comarisonId: ComparisonIds) => {};

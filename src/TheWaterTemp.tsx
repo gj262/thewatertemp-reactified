@@ -22,6 +22,7 @@ export interface TheWaterTempComponentTypes {
   SelectStation: ComponentTypes["SelectStation"];
   TemperatureValue: ComponentTypes["TemperatureValue"];
   TemperatureRange: ComponentTypes["TemperatureRange"];
+  Footer: ComponentTypes["Footer"];
 }
 
 export interface TheWaterTempContainerTypes {
@@ -108,6 +109,7 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
             }
             onComparisonChange={this.onComparisonChange}
           />
+          <Components.Footer />
         </div>
       </div>
     );
