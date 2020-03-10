@@ -1,6 +1,8 @@
 import { Action, UserPreferences, ActionTypes } from "../types";
 
-function userPreferences(state: UserPreferences = null, action: Action) {
+export type UserPreferencesState = UserPreferences;
+
+function userPreferences(state: UserPreferencesState = null, action: Action) {
   switch (action.type) {
     case ActionTypes.USER_PREFERENCES_LOADED:
     case ActionTypes.USER_PREFERENCES_UPDATED:
@@ -10,7 +12,7 @@ function userPreferences(state: UserPreferences = null, action: Action) {
   }
 }
 
-export function getUserPreferences(state: UserPreferences) {
+export function getUserPreferences(state: UserPreferencesState) {
   return state;
 }
 
