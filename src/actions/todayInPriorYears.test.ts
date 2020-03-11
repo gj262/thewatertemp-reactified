@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import nock from "nock";
 
 import { loadTodayInPriorYears } from "./todayInPriorYears";

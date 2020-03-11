@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import nock from "nock";
 
 import { loadStations } from "./stations";
@@ -67,9 +71,7 @@ it("dispatches an error for non 2xx", async () => {
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.FAILED_TO_LOAD_STATIONS,
-    error: new Error(
-      "Cannot load the stations list. Request failed with status code 500"
-    )
+    error: new Error("Cannot load the stations list. Request failed with status code 500")
   });
 });
 

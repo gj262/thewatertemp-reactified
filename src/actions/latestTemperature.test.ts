@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import nock from "nock";
 
 import { loadLatestTemperature } from "./latestTemperature";
@@ -52,11 +56,7 @@ it("dispatches the latest temp", async () => {
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.LATEST_TEMPERATURE_LOADED,
     payload: {
-      data: new Temperature(
-        55.8,
-        TemperatureScale.FAHRENHEIT,
-        "2020-02-29 16:36"
-      )
+      data: new Temperature(55.8, TemperatureScale.FAHRENHEIT, "2020-02-29 16:36")
     },
     meta: { stationId }
   });

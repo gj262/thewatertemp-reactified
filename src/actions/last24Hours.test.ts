@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import nock from "nock";
 
 import { ActionTypes, Temperature, TemperatureScale } from "../types";
@@ -61,16 +65,8 @@ it("dispatches the range, min, max, avg", async () => {
         new Temperature(33.8, TemperatureScale.FAHRENHEIT, "2020-03-03 18:48"),
         new Temperature(34.8, TemperatureScale.FAHRENHEIT, "2020-03-03 18:54")
       ],
-      min: new Temperature(
-        32.8,
-        TemperatureScale.FAHRENHEIT,
-        "2020-03-03 18:42"
-      ),
-      max: new Temperature(
-        34.8,
-        TemperatureScale.FAHRENHEIT,
-        "2020-03-03 18:54"
-      ),
+      min: new Temperature(32.8, TemperatureScale.FAHRENHEIT, "2020-03-03 18:42"),
+      max: new Temperature(34.8, TemperatureScale.FAHRENHEIT, "2020-03-03 18:54"),
       avg: new Temperature(33.8, TemperatureScale.FAHRENHEIT)
     },
     meta: { stationId }
