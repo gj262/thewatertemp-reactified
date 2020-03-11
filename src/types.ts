@@ -78,7 +78,12 @@ export enum ActionTypes {
   COMPARISON_LOADED = "COMPARISON_LOADED",
   PARTIAL_COMPARISON_LOAD = "PARTIAL_COMPARISON_LOAD",
   COMPLETED_COMPARISON_LOAD = "COMPLETED_COMPARISON_LOAD",
-  FAILED_TO_LOAD_COMPARISON = "FAILED_TO_LOAD_COMPARISON"
+  FAILED_TO_LOAD_COMPARISON = "FAILED_TO_LOAD_COMPARISON",
+  LOADING_TEMPERATURE_DATA = "LOADING_TEMPERATURE_DATA",
+  TEMPERATURE_DATA_LOADED = "TEMPERATURE_DATA_LOADED",
+  PARTIAL_COMPARISON_LIST_LOAD = "PARTIAL_COMPARISON_LIST_LOAD",
+  COMPLETED_COMPARISON_LIST_LOAD = "COMPLETED_COMPARISON_LIST_LOAD",
+  FAILED_TO_LOAD_TEMPERATURE_DATA = "FAILED_TO_LOAD_TEMPERATURE_DATA"
 }
 
 export interface UserPreferencesLoadedAction {
@@ -175,6 +180,65 @@ export interface FailedToLoadComparisonAction {
   meta: { stationId: string; comparisonId: ComparisonIds };
 }
 
+export enum TemperatureDataIds {
+  LATEST = "latest",
+  LAST_24_HOURS = "last24Hours",
+  LAST_SEVEN_DAYS = "lastSevenDays",
+  TODAY_IN_PRIOR_YEARS = "todayInPriorYears"
+}
+
+export interface TemperatureDataMeta {
+  stationId: string;
+  dataId: string;
+}
+
+export interface LoadingTemperatureDataAction {
+  type: ActionTypes.LOADING_TEMPERATURE_DATA;
+  meta: TemperatureDataMeta;
+}
+
+export interface SingleTemperatureLoadedAction {
+  type: ActionTypes.TEMPERATURE_DATA_LOADED;
+  payload: {
+    data: Temperature;
+  };
+  meta: TemperatureDataMeta;
+}
+
+export interface TemperatureRangeLoadedAction {
+  type: ActionTypes.TEMPERATURE_DATA_LOADED;
+  payload: {
+    data: TemperatureRange;
+  };
+  meta: TemperatureDataMeta;
+}
+
+export interface ComparisonListLoadedAction {
+  type: ActionTypes.TEMPERATURE_DATA_LOADED;
+  payload: {
+    data: ComparisonList;
+  };
+  meta: TemperatureDataMeta;
+}
+
+export interface PartialComparisonListLoadAction {
+  type: ActionTypes.PARTIAL_COMPARISON_LIST_LOAD;
+  payload: { data: ComparisonItem };
+  meta: TemperatureDataMeta;
+}
+
+export interface CompletedComparisonListLoadAction {
+  type: ActionTypes.COMPLETED_COMPARISON_LIST_LOAD;
+  payload: { endReason: string };
+  meta: TemperatureDataMeta;
+}
+
+export interface FailedToLoadTemperatureDataAction {
+  type: ActionTypes.FAILED_TO_LOAD_TEMPERATURE_DATA;
+  error: Error;
+  meta: TemperatureDataMeta;
+}
+
 export type Action =
   | UserPreferencesLoadedAction
   | UserPreferencesUpdatedAction
@@ -191,7 +255,14 @@ export type Action =
   | ComparisonLoadedAction
   | PartialComparisonLoadAction
   | CompletedComparisonLoadAction
-  | FailedToLoadComparisonAction;
+  | FailedToLoadComparisonAction
+  | LoadingTemperatureDataAction
+  | SingleTemperatureLoadedAction
+  | TemperatureRangeLoadedAction
+  | ComparisonListLoadedAction
+  | PartialComparisonListLoadAction
+  | CompletedComparisonListLoadAction
+  | FailedToLoadTemperatureDataAction;
 
 export interface FetchDataStageTypes {
   loading: ActionTypes;
