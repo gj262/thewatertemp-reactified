@@ -2,7 +2,7 @@ import React from "react";
 import { render, wait } from "@testing-library/react";
 
 import { TheWaterTemp, TheWaterTempProps, TheWaterTempComponentTypes, TheWaterTempContainerTypes } from "./TheWaterTemp";
-import { Temperature, TemperatureScale, Station, ComparisonIds } from "./types";
+import { Temperature, TemperatureScale, Station, TemperatureDataIds } from "./types";
 
 const userPreferences = {
   temperatureScale: TemperatureScale.CELSIUS
@@ -30,7 +30,7 @@ function commonAppTest(overrideProps: Partial<TheWaterTempProps>) {
       latestTemperature={null}
       errorLoadingLatestTemperature={null}
       last24Hours={null}
-      comparisonId={ComparisonIds.LAST_SEVEN_DAYS}
+      comparisonId={TemperatureDataIds.LAST_SEVEN_DAYS}
       path=""
       {...overrideProps}
     />
@@ -89,7 +89,7 @@ function makeMockComponentsWithCallbackTriggers() {
     Footer: () => <div>FOOTER</div>
   };
 
-  let comparisonChangeTrigger = (comarisonId: ComparisonIds) => {};
+  let comparisonChangeTrigger = (comparisonId: TemperatureDataIds) => {};
 
   const containerMocks: TheWaterTempContainerTypes = {
     Comparison: ({ onComparisonChange, latestStationTime }) => {
@@ -192,18 +192,18 @@ test("may update the station", () => {
 
   expect(addRoutingState).toBeCalledTimes(1);
   expect(addRoutingState.mock.calls[0][0]).toStrictEqual("33");
-  expect(addRoutingState.mock.calls[0][1]).toStrictEqual(ComparisonIds.LAST_SEVEN_DAYS);
+  expect(addRoutingState.mock.calls[0][1]).toStrictEqual(TemperatureDataIds.LAST_SEVEN_DAYS);
 });
 
 test("may update the comparison", () => {
   const addRoutingState = jest.fn();
   const { getComparisonChangeTrigger } = commonAppTest({ addRoutingState });
 
-  getComparisonChangeTrigger()(ComparisonIds.TODAY_IN_PRIOR_YEARS);
+  getComparisonChangeTrigger()(TemperatureDataIds.TODAY_IN_PRIOR_YEARS);
 
   expect(addRoutingState).toBeCalledTimes(1);
   expect(addRoutingState.mock.calls[0][0]).toStrictEqual("22");
-  expect(addRoutingState.mock.calls[0][1]).toStrictEqual(ComparisonIds.TODAY_IN_PRIOR_YEARS);
+  expect(addRoutingState.mock.calls[0][1]).toStrictEqual(TemperatureDataIds.TODAY_IN_PRIOR_YEARS);
 });
 
 test("should link to the station", () => {
@@ -307,7 +307,7 @@ test("loads the latest temp & last 24 for a new station", async () => {
       latestTemperature={new Temperature(76.1, TemperatureScale.FAHRENHEIT)}
       errorLoadingLatestTemperature={null}
       last24Hours={null}
-      comparisonId={ComparisonIds.LAST_SEVEN_DAYS}
+      comparisonId={TemperatureDataIds.LAST_SEVEN_DAYS}
       path=""
     />
   );

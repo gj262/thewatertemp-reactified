@@ -6,12 +6,11 @@ import "./TheWaterTemp.css";
 import { RootState } from "./reducers";
 import * as fromUserPreferences from "./reducers/userPreferences";
 import * as fromStations from "./reducers/stations";
-import * as fromLatestTemperature from "./reducers/latestTemperature";
-import * as fromLast24Hours from "./reducers/last24Hours";
+import * as fromTemperatureData from "./reducers/temperatureData";
 import makeActions, { ActionTypes } from "./actions";
 import AllComponents, { ComponentTypes } from "./components";
 import AllContainers, { ContainerTypes } from "./containers";
-import { TemperatureScale, UserPreferences, Station, Temperature, TemperatureRange, ComparisonIds } from "./types";
+import { TemperatureScale, UserPreferences, Station, Temperature, TemperatureRange, TemperatureDataIds } from "./types";
 import { DEFAULTS } from "./defaults";
 
 export type TheWaterTempProps = PropsFromDependencyInjection & PropsFromStore & PropsFromRouting;
@@ -141,7 +140,7 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
     addRoutingState(station.id, comparisonId);
   };
 
-  onComparisonChange = (comparisonId: ComparisonIds) => {
+  onComparisonChange = (comparisonId: TemperatureDataIds) => {
     const { addRoutingState, stationId } = this.props;
 
     addRoutingState(stationId, comparisonId);
@@ -200,11 +199,11 @@ const WithRouting: React.FunctionComponent = props => (
 interface PropsFromRouting {
   path: string;
   stationId?: string;
-  comparisonId?: ComparisonIds;
+  comparisonId?: TemperatureDataIds;
 }
 
 const InjectComponentsAndActions: React.FunctionComponent<PropsFromStore & PropsFromRouting> = props => {
-  const addRoutingState = (stationId: string, comparisonId: ComparisonIds) =>
+  const addRoutingState = (stationId: string, comparisonId: TemperatureDataIds) =>
     navigate(`/stations/${stationId}/compare/${comparisonId}`);
 
   return (
@@ -220,7 +219,7 @@ const InjectComponentsAndActions: React.FunctionComponent<PropsFromStore & Props
 
 interface PropsFromDependencyInjection {
   actions: TheWaterTempActionTypes;
-  addRoutingState: (stationId: string, comparisonId: ComparisonIds) => void;
+  addRoutingState: (stationId: string, comparisonId: TemperatureDataIds) => void;
   Components: TheWaterTempComponentTypes;
   Containers: TheWaterTempContainerTypes;
 }
@@ -244,9 +243,9 @@ const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {
 
   const userPreferences = fromUserPreferences.getUserPreferences(state.userPreferences);
 
-  let latestTemperature = fromLatestTemperature.getLatestTemperature(state.latestTemperature, stationId);
+  let latestTemperature = fromTemperatureData.getTemperature(state.temperatureData, stationId, TemperatureDataIds.LATEST);
 
-  let last24Hours = fromLast24Hours.getLast24Hours(state.last24Hours, stationId);
+  let last24Hours = fromTemperatureData.getTemperatureRange(state.temperatureData, stationId, TemperatureDataIds.LAST_24_HOURS);
 
   if (userPreferences) {
     if (latestTemperature) {
@@ -270,7 +269,11 @@ const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {
     errorLoadingStations: fromStations.getFailureMessage(state.stations),
     ...stationProps,
     latestTemperature,
-    errorLoadingLatestTemperature: fromLatestTemperature.getFailureMessage(state.latestTemperature, stationId),
+    errorLoadingLatestTemperature: fromTemperatureData.getFailureMessage(
+      state.temperatureData,
+      stationId,
+      TemperatureDataIds.LATEST
+    ),
     last24Hours,
     comparisonId
   };
@@ -290,7 +293,7 @@ interface PropsFromStore {
   latestTemperature: Temperature | null;
   errorLoadingLatestTemperature: string | null;
   last24Hours: TemperatureRange | null;
-  comparisonId: ComparisonIds;
+  comparisonId: TemperatureDataIds;
 }
 
 export default WithRouting;

@@ -47,13 +47,8 @@ export interface ComparisonItem {
 export type ComparisonList = ComparisonItem[];
 
 export interface ComparisonDescription {
-  id: ComparisonIds;
+  id: TemperatureDataIds;
   label: string;
-}
-
-export enum ComparisonIds {
-  LAST_SEVEN_DAYS = "lastSevenDays",
-  TODAY_IN_PRIOR_YEARS = "todayInPriorYears"
 }
 
 interface _UserPreferences {
@@ -68,17 +63,6 @@ export enum ActionTypes {
   LOADING_STATIONS = "LOADING_STATIONS",
   STATIONS_LOADED = "STATIONS_LOADED",
   FAILED_TO_LOAD_STATIONS = "FAILED_TO_LOAD_STATIONS",
-  LOADING_LATEST_TEMPERATURE = "LOADING_LATEST_TEMPERATURE",
-  LATEST_TEMPERATURE_LOADED = "LATEST_TEMPERATURE_LOADED",
-  FAILED_TO_LOAD_LATEST_TEMPERATURE = "FAILED_TO_LOAD_LATEST_TEMPERATURE",
-  LOADING_LAST_24_HOURS = "LOADING_LAST_24_HOURS",
-  LAST_24_HOURS_LOADED = "LAST_24_HOURS_LOADED",
-  FAILED_TO_LOAD_LAST_24_HOURS = "FAILED_TO_LOAD_LAST_24_HOURS",
-  LOADING_COMPARISON = "LOADING_COMPARISON",
-  COMPARISON_LOADED = "COMPARISON_LOADED",
-  PARTIAL_COMPARISON_LOAD = "PARTIAL_COMPARISON_LOAD",
-  COMPLETED_COMPARISON_LOAD = "COMPLETED_COMPARISON_LOAD",
-  FAILED_TO_LOAD_COMPARISON = "FAILED_TO_LOAD_COMPARISON",
   LOADING_TEMPERATURE_DATA = "LOADING_TEMPERATURE_DATA",
   TEMPERATURE_DATA_LOADED = "TEMPERATURE_DATA_LOADED",
   PARTIAL_COMPARISON_LIST_LOAD = "PARTIAL_COMPARISON_LIST_LOAD",
@@ -108,76 +92,6 @@ export interface StationsLoadedAction {
 export interface FailedToLoadStationsAction {
   type: ActionTypes.FAILED_TO_LOAD_STATIONS;
   error: Error;
-}
-
-export interface LoadingLatestTemperatureAction {
-  type: ActionTypes.LOADING_LATEST_TEMPERATURE;
-  meta: { stationId: string };
-}
-
-export interface LatestTemperatureLoadedAction {
-  type: ActionTypes.LATEST_TEMPERATURE_LOADED;
-  payload: { data: Temperature };
-  meta: { stationId: string };
-}
-
-export interface FailedToLoadLatestTemperatureAction {
-  type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE;
-  error: Error;
-  meta: { stationId: string };
-}
-
-export interface LoadingLast24HoursAction {
-  type: ActionTypes.LOADING_LAST_24_HOURS;
-  meta: { stationId: string };
-}
-
-export interface Last24HoursLoadedAction {
-  type: ActionTypes.LAST_24_HOURS_LOADED;
-  payload: {
-    data: Temperature[];
-    min: Temperature;
-    max: Temperature;
-    avg: Temperature;
-  };
-  meta: { stationId: string };
-}
-
-export interface FailedToLoadLast24HoursAction {
-  type: ActionTypes.FAILED_TO_LOAD_LAST_24_HOURS;
-  error: Error;
-  meta: { stationId: string };
-}
-
-export interface LoadingComparisonAction {
-  type: ActionTypes.LOADING_COMPARISON;
-  meta: { stationId: string; comparisonId: ComparisonIds };
-}
-
-export interface ComparisonLoadedAction {
-  type: ActionTypes.COMPARISON_LOADED;
-  payload: {
-    data: ComparisonList;
-  };
-  meta: { stationId: string; comparisonId: ComparisonIds };
-}
-
-export interface PartialComparisonLoadAction {
-  type: ActionTypes.PARTIAL_COMPARISON_LOAD;
-  payload: ComparisonItem;
-  meta: { stationId: string; comparisonId: ComparisonIds };
-}
-
-export interface CompletedComparisonLoadAction {
-  type: ActionTypes.COMPLETED_COMPARISON_LOAD;
-  payload: { endReason: string };
-  meta: { stationId: string; comparisonId: ComparisonIds };
-}
-
-export interface FailedToLoadComparisonAction {
-  type: ActionTypes.FAILED_TO_LOAD_COMPARISON;
-  error: Error;
-  meta: { stationId: string; comparisonId: ComparisonIds };
 }
 
 export enum TemperatureDataIds {
@@ -245,17 +159,6 @@ export type Action =
   | LoadingStationsAction
   | StationsLoadedAction
   | FailedToLoadStationsAction
-  | LoadingLatestTemperatureAction
-  | LatestTemperatureLoadedAction
-  | FailedToLoadLatestTemperatureAction
-  | LoadingLast24HoursAction
-  | Last24HoursLoadedAction
-  | FailedToLoadLast24HoursAction
-  | LoadingComparisonAction
-  | ComparisonLoadedAction
-  | PartialComparisonLoadAction
-  | CompletedComparisonLoadAction
-  | FailedToLoadComparisonAction
   | LoadingTemperatureDataAction
   | SingleTemperatureLoadedAction
   | TemperatureRangeLoadedAction

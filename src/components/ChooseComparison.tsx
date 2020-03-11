@@ -1,22 +1,16 @@
 import React from "react";
-import { ComparisonDescription, ComparisonIds } from "../types";
+import { ComparisonDescription, TemperatureDataIds } from "../types";
 import "./ChooseComparison.css";
 
 interface ChooseComparisonProps {
-  selectedId: ComparisonIds;
+  selectedId: TemperatureDataIds;
   comparisons: ComparisonDescription[];
-  onChange: (id: ComparisonIds) => void;
+  onChange: (id: TemperatureDataIds) => void;
 }
 
-export type ChooseComparisonComponentType = React.FunctionComponent<
-  ChooseComparisonProps
->;
+export type ChooseComparisonComponentType = React.FunctionComponent<ChooseComparisonProps>;
 
-const ChooseComparisonComponent: ChooseComparisonComponentType = ({
-  selectedId,
-  comparisons,
-  onChange
-}) => (
+const ChooseComparisonComponent: ChooseComparisonComponentType = ({ selectedId, comparisons, onChange }) => (
   <>
     <label htmlFor="chooseComparison" className="visually-hidden">
       Compare today with
@@ -25,7 +19,7 @@ const ChooseComparisonComponent: ChooseComparisonComponentType = ({
       id="chooseComparison"
       className="choose-comparison"
       value={selectedId}
-      onChange={e => onChange(e.target.value as ComparisonIds)}
+      onChange={e => onChange(e.target.value as TemperatureDataIds)}
     >
       {comparisons.map(comparison => (
         <option key={comparison.id} value={comparison.id}>

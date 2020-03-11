@@ -2,7 +2,7 @@ import React from "react";
 import { render } from "@testing-library/react";
 
 import { Comparison, ComparisonProps, ComparisonComponentTypes } from "./Comparison";
-import { ComparisonIds } from "../types";
+import { TemperatureDataIds } from "../types";
 
 const testStationId = "22";
 
@@ -18,7 +18,7 @@ function commonTest(overrideProps: Partial<ComparisonProps>) {
     Components: mockComponents,
     stationId: testStationId,
     latestStationTime,
-    comparisonId: ComparisonIds.LAST_SEVEN_DAYS,
+    comparisonId: TemperatureDataIds.LAST_SEVEN_DAYS,
     onComparisonChange: jest.fn(),
     list: [],
     isLoading: false,
@@ -45,7 +45,7 @@ function makeMockActions() {
 }
 
 function makeMockComponentsWithCallbackTriggers() {
-  let comparisonChangeTrigger = (id: ComparisonIds) => {};
+  let comparisonChangeTrigger = (id: TemperatureDataIds) => {};
 
   const mocks: ComparisonComponentTypes = {
     ChooseComparison: ({ onChange }) => {
@@ -70,7 +70,7 @@ test("loads comparison data", () => {
 
 test("loads the other comparison data", () => {
   const { mockActions } = commonTest({
-    comparisonId: ComparisonIds.TODAY_IN_PRIOR_YEARS
+    comparisonId: TemperatureDataIds.TODAY_IN_PRIOR_YEARS
   });
 
   expect(mockActions.loadLastSevenDayComparison).toBeCalledTimes(0);
@@ -90,7 +90,7 @@ test("loads comparison data when the station changes (foisted)", () => {
 test("loads comparison data when the comparison changes (foisted)", () => {
   const { mockActions, propsAtFirstRender, rerender } = commonTest({});
 
-  rerender(<Comparison {...propsAtFirstRender} comparisonId={ComparisonIds.TODAY_IN_PRIOR_YEARS} />);
+  rerender(<Comparison {...propsAtFirstRender} comparisonId={TemperatureDataIds.TODAY_IN_PRIOR_YEARS} />);
 
   expect(mockActions.loadLastSevenDayComparison).toBeCalledTimes(1);
   expect(mockActions.loadTodayInPriorYearsComparison).toBeCalledTimes(1);
@@ -102,8 +102,8 @@ test("bubbles up the comparison change (for routing)", () => {
     onComparisonChange: onChange
   });
 
-  getComparisonChangeTrigger()(ComparisonIds.TODAY_IN_PRIOR_YEARS);
+  getComparisonChangeTrigger()(TemperatureDataIds.TODAY_IN_PRIOR_YEARS);
 
   expect(onChange).toBeCalledTimes(1);
-  expect(onChange.mock.calls[0][0]).toBe(ComparisonIds.TODAY_IN_PRIOR_YEARS);
+  expect(onChange.mock.calls[0][0]).toBe(TemperatureDataIds.TODAY_IN_PRIOR_YEARS);
 });

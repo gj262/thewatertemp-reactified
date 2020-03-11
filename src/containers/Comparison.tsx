@@ -1,12 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
-//import "./Comparison.css";
 import { RootState } from "../reducers";
 import makeActions, { ActionTypes } from "../actions";
 import AllComponents, { ComponentTypes } from "../components";
-import { ComparisonIds, ComparisonDescription, ComparisonList } from "../types";
-import * as fromComparison from "../reducers/comparison";
+import { ComparisonDescription, ComparisonList, TemperatureDataIds } from "../types";
+import * as fromTemperatureData from "../reducers/temperatureData";
 import * as fromUserPreferences from "../reducers/userPreferences";
 
 export type ComparisonProps = PropsFromAbove & PropsFromStore & PropsFromDependencyInjection;
@@ -14,8 +13,8 @@ export type ComparisonProps = PropsFromAbove & PropsFromStore & PropsFromDepende
 export interface PropsFromAbove {
   stationId: string;
   latestStationTime: Date;
-  comparisonId: ComparisonIds;
-  onComparisonChange: (id: ComparisonIds) => void;
+  comparisonId: TemperatureDataIds;
+  onComparisonChange: (id: TemperatureDataIds) => void;
 }
 
 export interface ComparisonComponentTypes {
@@ -30,8 +29,8 @@ export interface ComparisonActionTypes {
 
 export class Comparison extends React.Component<ComparisonProps> {
   comparisons: ComparisonDescription[] = [
-    { id: ComparisonIds.LAST_SEVEN_DAYS, label: "Last 7 days" },
-    { id: ComparisonIds.TODAY_IN_PRIOR_YEARS, label: "Today in prior years" }
+    { id: TemperatureDataIds.LAST_SEVEN_DAYS, label: "Last 7 days" },
+    { id: TemperatureDataIds.TODAY_IN_PRIOR_YEARS, label: "Today in prior years" }
   ];
 
   render() {
@@ -53,10 +52,10 @@ export class Comparison extends React.Component<ComparisonProps> {
     const { actions, stationId, comparisonId, latestStationTime } = this.props;
 
     switch (comparisonId) {
-      case ComparisonIds.LAST_SEVEN_DAYS:
+      case TemperatureDataIds.LAST_SEVEN_DAYS:
         actions.loadLastSevenDayComparison(stationId, latestStationTime);
         break;
-      case ComparisonIds.TODAY_IN_PRIOR_YEARS:
+      case TemperatureDataIds.TODAY_IN_PRIOR_YEARS:
         actions.loadTodayInPriorYearsComparison(stationId, latestStationTime);
         break;
       default:
@@ -86,7 +85,7 @@ interface PropsFromDependencyInjection {
 
 const mapStateToProps = (state: RootState, ownProps: PropsFromAbove) => {
   const userPreferences = fromUserPreferences.getUserPreferences(state.userPreferences);
-  let list = fromComparison.getComparison(state.comparison, ownProps.stationId, ownProps.comparisonId);
+  let list = fromTemperatureData.getComparisonList(state.temperatureData, ownProps.stationId, ownProps.comparisonId);
 
   if (userPreferences && list) {
     list = list.map(item => {
@@ -106,8 +105,8 @@ const mapStateToProps = (state: RootState, ownProps: PropsFromAbove) => {
 
   return {
     list,
-    isLoading: fromComparison.isLoading(state.comparison, ownProps.stationId, ownProps.comparisonId),
-    endReason: fromComparison.getEndReason(state.comparison, ownProps.stationId, ownProps.comparisonId)
+    isLoading: fromTemperatureData.isLoading(state.temperatureData, ownProps.stationId, ownProps.comparisonId),
+    endReason: fromTemperatureData.getEndReason(state.temperatureData, ownProps.stationId, ownProps.comparisonId)
   };
 };
 
