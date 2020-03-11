@@ -2,7 +2,7 @@ import axios, { AxiosResponse, AxiosPromise } from "axios";
 import { Dispatch } from "redux";
 
 import { cleanData, min, max, avg } from "./fetchData";
-import { ActionTypes, ComparisonIds, Temperature } from "../types";
+import { ActionTypes, TemperatureDataIds, Temperature, PartialComparisonListLoadAction } from "../types";
 import { DEFAULTS } from "../defaults";
 
 export function loadTodayInPriorYears(
@@ -11,10 +11,10 @@ export function loadTodayInPriorYears(
   latestStationTime: Date,
   endAfter: number = 5
 ): AxiosPromise {
-  const meta = { stationId, comparisonId: ComparisonIds.TODAY_IN_PRIOR_YEARS };
+  const meta = { stationId, dataId: TemperatureDataIds.TODAY_IN_PRIOR_YEARS };
 
   dispatch({
-    type: ActionTypes.LOADING_COMPARISON,
+    type: ActionTypes.LOADING_TEMPERATURE_DATA,
     meta
   });
 
@@ -31,23 +31,26 @@ export function loadTodayInPriorYears(
     function handleData(data: Temperature[]): AxiosPromise {
       consecutiveFailingYears.forEach((failedYear: number) => {
         dispatch({
-          type: ActionTypes.PARTIAL_COMPARISON_LOAD,
+          type: ActionTypes.PARTIAL_COMPARISON_LIST_LOAD,
           payload: {
-            regarding: `${failedYear}`,
-            range: null
+            data: {
+              regarding: `${failedYear}`
+            }
           },
           meta
-        });
+        } as PartialComparisonListLoadAction);
       });
 
       dispatch({
-        type: ActionTypes.PARTIAL_COMPARISON_LOAD,
+        type: ActionTypes.PARTIAL_COMPARISON_LIST_LOAD,
         payload: {
-          regarding: `${year}`,
-          range: data.length ? { min: min(data), max: max(data), avg: avg(data) } : null
+          data: {
+            regarding: `${year}`,
+            range: data.length ? { min: min(data), max: max(data), avg: avg(data) } : null
+          }
         },
         meta
-      });
+      } as PartialComparisonListLoadAction);
 
       return getTodaysDataForYear(year - 1, []);
     }
@@ -61,7 +64,7 @@ export function loadTodayInPriorYears(
 
       if (consecutiveFailingYears.length >= endAfter) {
         dispatch({
-          type: ActionTypes.COMPLETED_COMPARISON_LOAD,
+          type: ActionTypes.COMPLETED_COMPARISON_LIST_LOAD,
           payload: { endReason: `Tried ${consecutiveFailingYears.join(", ")}` },
           meta
         });

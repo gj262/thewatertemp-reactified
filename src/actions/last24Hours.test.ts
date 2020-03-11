@@ -4,7 +4,7 @@
 
 import nock from "nock";
 
-import { ActionTypes, Temperature, TemperatureScale } from "../types";
+import { ActionTypes, Temperature, TemperatureScale, TemperatureDataIds } from "../types";
 import { loadLast24Hours } from "./last24Hours";
 import { DEFAULTS } from "../defaults";
 
@@ -36,8 +36,8 @@ it("dispatches loading", async () => {
   await loadLast24Hours(dispatch, stationId);
 
   expect(dispatch).toBeCalledWith({
-    type: ActionTypes.LOADING_LAST_24_HOURS,
-    meta: { stationId }
+    type: ActionTypes.LOADING_TEMPERATURE_DATA,
+    meta: { stationId, dataId: TemperatureDataIds.LAST_24_HOURS }
   });
 });
 
@@ -58,17 +58,14 @@ it("dispatches the range, min, max, avg", async () => {
 
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
-    type: ActionTypes.LAST_24_HOURS_LOADED,
+    type: ActionTypes.TEMPERATURE_DATA_LOADED,
     payload: {
-      data: [
-        new Temperature(32.8, TemperatureScale.FAHRENHEIT, "2020-03-03 18:42"),
-        new Temperature(33.8, TemperatureScale.FAHRENHEIT, "2020-03-03 18:48"),
-        new Temperature(34.8, TemperatureScale.FAHRENHEIT, "2020-03-03 18:54")
-      ],
-      min: new Temperature(32.8, TemperatureScale.FAHRENHEIT, "2020-03-03 18:42"),
-      max: new Temperature(34.8, TemperatureScale.FAHRENHEIT, "2020-03-03 18:54"),
-      avg: new Temperature(33.8, TemperatureScale.FAHRENHEIT)
+      data: {
+        min: new Temperature(32.8, TemperatureScale.FAHRENHEIT, "2020-03-03 18:42"),
+        max: new Temperature(34.8, TemperatureScale.FAHRENHEIT, "2020-03-03 18:54"),
+        avg: new Temperature(33.8, TemperatureScale.FAHRENHEIT)
+      }
     },
-    meta: { stationId }
+    meta: { stationId, dataId: TemperatureDataIds.LAST_24_HOURS }
   });
 });

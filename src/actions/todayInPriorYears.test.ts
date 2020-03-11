@@ -6,7 +6,7 @@ import nock from "nock";
 
 import { loadTodayInPriorYears } from "./todayInPriorYears";
 
-import { ActionTypes, ComparisonIds, Temperature, TemperatureScale } from "../types";
+import { ActionTypes, TemperatureDataIds, Temperature, TemperatureScale, PartialComparisonListLoadAction } from "../types";
 import { DEFAULTS } from "../defaults";
 
 const testStationId = "22";
@@ -42,10 +42,10 @@ it("dispatches loading", async () => {
   await loadTodayInPriorYears(dispatch, testStationId, latestStationTime, 1);
 
   expect(dispatch.mock.calls[0][0]).toStrictEqual({
-    type: ActionTypes.LOADING_COMPARISON,
+    type: ActionTypes.LOADING_TEMPERATURE_DATA,
     meta: {
       stationId: testStationId,
-      comparisonId: ComparisonIds.TODAY_IN_PRIOR_YEARS
+      dataId: TemperatureDataIds.TODAY_IN_PRIOR_YEARS
     }
   });
 });
@@ -57,20 +57,22 @@ it("dispatches the first year", async () => {
   await loadTodayInPriorYears(dispatch, testStationId, latestStationTime, 1);
 
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
-    type: ActionTypes.PARTIAL_COMPARISON_LOAD,
+    type: ActionTypes.PARTIAL_COMPARISON_LIST_LOAD,
     payload: {
-      regarding: "2019",
-      range: {
-        min: new Temperature(33.6, TemperatureScale.FAHRENHEIT, "2019-03-05 15:30"),
-        max: new Temperature(33.6, TemperatureScale.FAHRENHEIT, "2019-03-05 15:30"),
-        avg: new Temperature(33.6, TemperatureScale.FAHRENHEIT)
+      data: {
+        regarding: "2019",
+        range: {
+          min: new Temperature(33.6, TemperatureScale.FAHRENHEIT, "2019-03-05 15:30"),
+          max: new Temperature(33.6, TemperatureScale.FAHRENHEIT, "2019-03-05 15:30"),
+          avg: new Temperature(33.6, TemperatureScale.FAHRENHEIT)
+        }
       }
     },
     meta: {
       stationId: testStationId,
-      comparisonId: ComparisonIds.TODAY_IN_PRIOR_YEARS
+      dataId: TemperatureDataIds.TODAY_IN_PRIOR_YEARS
     }
-  });
+  } as PartialComparisonListLoadAction);
 });
 
 it("and the next", async () => {
@@ -80,20 +82,22 @@ it("and the next", async () => {
   await loadTodayInPriorYears(dispatch, testStationId, latestStationTime, 1);
 
   expect(dispatch.mock.calls[2][0]).toStrictEqual({
-    type: ActionTypes.PARTIAL_COMPARISON_LOAD,
+    type: ActionTypes.PARTIAL_COMPARISON_LIST_LOAD,
     payload: {
-      regarding: "2018",
-      range: {
-        min: new Temperature(33.6, TemperatureScale.FAHRENHEIT, "2018-03-05 15:30"),
-        max: new Temperature(33.6, TemperatureScale.FAHRENHEIT, "2018-03-05 15:30"),
-        avg: new Temperature(33.6, TemperatureScale.FAHRENHEIT)
+      data: {
+        regarding: "2018",
+        range: {
+          min: new Temperature(33.6, TemperatureScale.FAHRENHEIT, "2018-03-05 15:30"),
+          max: new Temperature(33.6, TemperatureScale.FAHRENHEIT, "2018-03-05 15:30"),
+          avg: new Temperature(33.6, TemperatureScale.FAHRENHEIT)
+        }
       }
     },
     meta: {
       stationId: testStationId,
-      comparisonId: ComparisonIds.TODAY_IN_PRIOR_YEARS
+      dataId: TemperatureDataIds.TODAY_IN_PRIOR_YEARS
     }
-  });
+  } as PartialComparisonListLoadAction);
 });
 
 it("finishes", async () => {
@@ -103,13 +107,13 @@ it("finishes", async () => {
   await loadTodayInPriorYears(dispatch, testStationId, latestStationTime, 2);
 
   expect(dispatch.mock.calls[3][0]).toStrictEqual({
-    type: ActionTypes.COMPLETED_COMPARISON_LOAD,
+    type: ActionTypes.COMPLETED_COMPARISON_LIST_LOAD,
     payload: {
       endReason: "Tried 2017, 2016"
     },
     meta: {
       stationId: testStationId,
-      comparisonId: ComparisonIds.TODAY_IN_PRIOR_YEARS
+      dataId: TemperatureDataIds.TODAY_IN_PRIOR_YEARS
     }
   });
 });
@@ -149,25 +153,26 @@ it("handles gaps", async () => {
   await loadTodayInPriorYears(dispatch, testStationId, latestStationTime, 2);
 
   expect(dispatch.mock.calls[2][0]).toStrictEqual({
-    type: ActionTypes.PARTIAL_COMPARISON_LOAD,
+    type: ActionTypes.PARTIAL_COMPARISON_LIST_LOAD,
     payload: {
-      regarding: "2018",
-      range: null
+      data: {
+        regarding: "2018"
+      }
     },
     meta: {
       stationId: testStationId,
-      comparisonId: ComparisonIds.TODAY_IN_PRIOR_YEARS
+      dataId: TemperatureDataIds.TODAY_IN_PRIOR_YEARS
     }
-  });
+  } as PartialComparisonListLoadAction);
 
   expect(dispatch.mock.calls[4][0]).toStrictEqual({
-    type: ActionTypes.COMPLETED_COMPARISON_LOAD,
+    type: ActionTypes.COMPLETED_COMPARISON_LIST_LOAD,
     payload: {
       endReason: "Tried 2016, 2015"
     },
     meta: {
       stationId: testStationId,
-      comparisonId: ComparisonIds.TODAY_IN_PRIOR_YEARS
+      dataId: TemperatureDataIds.TODAY_IN_PRIOR_YEARS
     }
   });
 });

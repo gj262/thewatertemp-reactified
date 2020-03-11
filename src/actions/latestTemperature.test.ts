@@ -5,7 +5,7 @@
 import nock from "nock";
 
 import { loadLatestTemperature } from "./latestTemperature";
-import { ActionTypes, Temperature, TemperatureScale } from "../types";
+import { ActionTypes, Temperature, TemperatureScale, TemperatureDataIds } from "../types";
 import { DEFAULTS } from "../defaults";
 
 const positiveReplyData = {
@@ -32,8 +32,8 @@ it("dispatches loading", async () => {
   await loadLatestTemperature(dispatch, stationId);
 
   expect(dispatch).toBeCalledWith({
-    type: ActionTypes.LOADING_LATEST_TEMPERATURE,
-    meta: { stationId }
+    type: ActionTypes.LOADING_TEMPERATURE_DATA,
+    meta: { stationId, dataId: TemperatureDataIds.LATEST }
   });
 });
 
@@ -54,11 +54,11 @@ it("dispatches the latest temp", async () => {
 
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
-    type: ActionTypes.LATEST_TEMPERATURE_LOADED,
+    type: ActionTypes.TEMPERATURE_DATA_LOADED,
     payload: {
       data: new Temperature(55.8, TemperatureScale.FAHRENHEIT, "2020-02-29 16:36")
     },
-    meta: { stationId }
+    meta: { stationId, dataId: TemperatureDataIds.LATEST }
   });
 });
 
@@ -73,9 +73,9 @@ it("dispatches an error for non 2xx", async () => {
 
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
-    type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
+    type: ActionTypes.FAILED_TO_LOAD_TEMPERATURE_DATA,
     error: new Error("Request failed with status code 404"),
-    meta: { stationId }
+    meta: { stationId, dataId: TemperatureDataIds.LATEST }
   });
 });
 
@@ -90,9 +90,9 @@ it("dispatches an error for bad data", async () => {
 
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
-    type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
+    type: ActionTypes.FAILED_TO_LOAD_TEMPERATURE_DATA,
     error: new Error("No data was returned"),
-    meta: { stationId }
+    meta: { stationId, dataId: TemperatureDataIds.LATEST }
   });
 });
 
@@ -111,9 +111,9 @@ it("dispatches an error for an error response", async () => {
 
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
-    type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
+    type: ActionTypes.FAILED_TO_LOAD_TEMPERATURE_DATA,
     error: new Error("No data was found. This product ..."),
-    meta: { stationId }
+    meta: { stationId, dataId: TemperatureDataIds.LATEST }
   });
 });
 
@@ -140,9 +140,9 @@ it("must have a non zero 'v'", async () => {
 
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
-    type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
+    type: ActionTypes.FAILED_TO_LOAD_TEMPERATURE_DATA,
     error: new Error("The data is unuseable"),
-    meta: { stationId }
+    meta: { stationId, dataId: TemperatureDataIds.LATEST }
   });
 });
 
@@ -159,9 +159,9 @@ it("must have a 'v'", async () => {
 
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
-    type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
+    type: ActionTypes.FAILED_TO_LOAD_TEMPERATURE_DATA,
     error: new Error("The data is unuseable"),
-    meta: { stationId }
+    meta: { stationId, dataId: TemperatureDataIds.LATEST }
   });
 });
 
@@ -178,8 +178,8 @@ it("must have a 'v=t'", async () => {
 
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
-    type: ActionTypes.FAILED_TO_LOAD_LATEST_TEMPERATURE,
+    type: ActionTypes.FAILED_TO_LOAD_TEMPERATURE_DATA,
     error: new Error("The data is unuseable"),
-    meta: { stationId }
+    meta: { stationId, dataId: TemperatureDataIds.LATEST }
   });
 });

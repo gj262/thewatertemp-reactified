@@ -2,14 +2,14 @@ import axios from "axios";
 import { Dispatch } from "redux";
 
 import { cleanData, min, max, avg } from "./fetchData";
-import { ActionTypes, ComparisonIds, Temperature, ComparisonList } from "../types";
+import { ActionTypes, Temperature, ComparisonList, TemperatureDataIds } from "../types";
 import { DEFAULTS } from "../defaults";
 
 export function loadLastSevenDayComparison(dispatch: Dispatch, stationId: string, latestStationTime: Date): Promise<void> {
-  const meta = { stationId, comparisonId: ComparisonIds.LAST_SEVEN_DAYS };
+  const meta = { stationId, dataId: TemperatureDataIds.LAST_SEVEN_DAYS };
 
   dispatch({
-    type: ActionTypes.LOADING_COMPARISON,
+    type: ActionTypes.LOADING_TEMPERATURE_DATA,
     meta
   });
 
@@ -70,7 +70,7 @@ export function loadLastSevenDayComparison(dispatch: Dispatch, stationId: string
       }
 
       dispatch({
-        type: ActionTypes.COMPARISON_LOADED,
+        type: ActionTypes.TEMPERATURE_DATA_LOADED,
         payload: { data: series },
         meta
       });
@@ -81,9 +81,9 @@ export function loadLastSevenDayComparison(dispatch: Dispatch, stationId: string
     });
 }
 
-function _dispatchFetchFailed(dispatch: Dispatch, meta: { stationId: string; comparisonId: ComparisonIds }, message: string) {
+function _dispatchFetchFailed(dispatch: Dispatch, meta: { stationId: string; dataId: TemperatureDataIds }, message: string) {
   dispatch({
-    type: ActionTypes.FAILED_TO_LOAD_COMPARISON,
+    type: ActionTypes.FAILED_TO_LOAD_TEMPERATURE_DATA,
     error: new Error(message),
     meta
   });

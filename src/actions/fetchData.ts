@@ -1,17 +1,11 @@
 import axios from "axios";
 import { Dispatch } from "redux";
-import { Temperature, TemperatureScale, FetchDataStageTypes, FetchDataMeta } from "../types";
+import { Temperature, TemperatureScale, TemperatureDataMeta, ActionTypes } from "../types";
 import { DEFAULTS } from "../defaults";
 
-export function fetchData(
-  dispatch: Dispatch,
-  stageTypes: FetchDataStageTypes,
-  meta: FetchDataMeta,
-  path: string[],
-  range: boolean
-) {
+export function fetchData(dispatch: Dispatch, meta: TemperatureDataMeta, path: string[], range: boolean) {
   dispatch({
-    type: stageTypes.loading,
+    type: ActionTypes.LOADING_TEMPERATURE_DATA,
     meta
   });
 
@@ -35,8 +29,8 @@ export function fetchData(
       }
 
       dispatch({
-        type: stageTypes.fetched,
-        payload: range ? { data, min: min(data), max: max(data), avg: avg(data) } : { data: data[0] },
+        type: ActionTypes.TEMPERATURE_DATA_LOADED,
+        payload: { data: range ? { min: min(data), max: max(data), avg: avg(data) } : data[0] },
         meta
       });
     })
@@ -46,7 +40,7 @@ export function fetchData(
         error = new Error(error.toJSON().message);
       } catch (e) {}
       dispatch({
-        type: stageTypes.failed,
+        type: ActionTypes.FAILED_TO_LOAD_TEMPERATURE_DATA,
         error,
         meta
       });

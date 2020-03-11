@@ -5,7 +5,7 @@
 import nock from "nock";
 
 import { loadLastSevenDayComparison } from "./lastSevenDayComparison";
-import { ActionTypes, ComparisonIds, Temperature, TemperatureScale } from "../types";
+import { ActionTypes, Temperature, TemperatureScale, TemperatureDataIds } from "../types";
 import { DEFAULTS } from "../defaults";
 
 const testStationId = "22";
@@ -93,10 +93,10 @@ it("dispatches loading", async () => {
   await loadLastSevenDayComparison(dispatch, testStationId, latestStationTime);
 
   expect(dispatch).toBeCalledWith({
-    type: ActionTypes.LOADING_COMPARISON,
+    type: ActionTypes.LOADING_TEMPERATURE_DATA,
     meta: {
       stationId: testStationId,
-      comparisonId: ComparisonIds.LAST_SEVEN_DAYS
+      dataId: TemperatureDataIds.LAST_SEVEN_DAYS
     }
   });
 });
@@ -117,13 +117,13 @@ it("dispatches when loaded", async () => {
   await loadLastSevenDayComparison(dispatch, testStationId, latestStationTime);
 
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
-    type: ActionTypes.COMPARISON_LOADED,
+    type: ActionTypes.TEMPERATURE_DATA_LOADED,
     payload: {
       data: payloadDataToMatch
     },
     meta: {
       stationId: testStationId,
-      comparisonId: ComparisonIds.LAST_SEVEN_DAYS
+      dataId: TemperatureDataIds.LAST_SEVEN_DAYS
     }
   });
 });

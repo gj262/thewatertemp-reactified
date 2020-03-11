@@ -264,18 +264,6 @@ export type Action =
   | CompletedComparisonListLoadAction
   | FailedToLoadTemperatureDataAction;
 
-export interface FetchDataStageTypes {
-  loading: ActionTypes;
-  fetched: ActionTypes;
-  failed: ActionTypes;
-}
-
-interface FetchLatestTemperatureMeta {
-  stationId: string;
-}
-
-export type FetchDataMeta = FetchLatestTemperatureMeta;
-
 export interface LocalStorage {
   getItem: (name: string) => string | null;
   setItem: (name: string, value: string) => void;
