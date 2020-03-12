@@ -42,9 +42,7 @@ export function loadStations(dispatch: Dispatch) {
       console.log(error.toJSON());
       dispatch({
         type: ActionTypes.FAILED_TO_LOAD_STATIONS,
-        error: new Error(
-          "Cannot load the stations list. " + error.toJSON().message
-        )
+        error: new Error("Cannot load the stations list. " + error.toJSON().message)
       });
     });
 }

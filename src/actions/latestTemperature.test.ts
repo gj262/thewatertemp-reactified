@@ -91,7 +91,7 @@ it("dispatches an error for bad data", async () => {
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.FAILED_TO_LOAD_TEMPERATURE_DATA,
-    error: new Error("No data was returned"),
+    error: new Error("Bad response"),
     meta: { stationId, dataId: TemperatureDataIds.LATEST }
   });
 });

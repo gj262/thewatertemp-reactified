@@ -1,7 +1,7 @@
-import axios, { AxiosResponse, AxiosPromise } from "axios";
+import axios, { AxiosPromise } from "axios";
 import { Dispatch } from "redux";
 
-import { cleanData, min, max, avg } from "./fetchData";
+import { getDataFromResponseOrReject, cleanData, min, max, avg, rejectNoData } from "./fetchData";
 import { ActionTypes, TemperatureDataIds, Temperature, PartialComparisonListLoadAction } from "../types";
 import { DEFAULTS } from "../defaults";
 
@@ -23,8 +23,9 @@ export function loadTodayInPriorYears(
   function getTodaysDataForYear(year: number, consecutiveFailingYears: number[]): Promise<any> {
     return axios
       .get(getURLForYear(year))
-      .then(rejectInvalidResponse)
+      .then(getDataFromResponseOrReject)
       .then(cleanData)
+      .then(rejectNoData)
       .then(handleData)
       .catch(handleError);
 
@@ -88,17 +89,5 @@ export function loadTodayInPriorYears(
       (getDateButFudgeLeapYear(latestStationTime) + "").padStart(2, "0");
 
     return DEFAULTS.NOAA_API_HOSTNAME + DEFAULTS.TEMPERATURE_DATA_PATH + stationId + "&begin_date=" + beginStr + "&range=24";
-  }
-
-  function rejectInvalidResponse(response: AxiosResponse): any[] {
-    if (response.data && response.data.error && response.data.error.message) {
-      throw new Error(response.data.error.message);
-    }
-
-    if (!response.data || !response.data.data || !Array.isArray(response.data.data)) {
-      throw new Error("Bad response");
-    }
-
-    return response.data.data;
   }
 }
