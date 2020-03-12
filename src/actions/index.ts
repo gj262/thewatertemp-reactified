@@ -12,7 +12,7 @@ export default function makeActions(dispatch: Dispatch, localStorage: LocalStora
   return {
     loadUserPreferences: forUserPreferences.loadUserPreferences.bind({}, dispatch, localStorage),
     updateUserPreferences: forUserPreferences.updateUserPreferences.bind({}, dispatch, localStorage),
-    loadStations: forStations.loadStations.bind({}, dispatch),
+    loadStations: forStations.loadStations.bind({}, dispatch, localStorage),
     loadLatestTemperature: forLatestTemperature.loadLatestTemperature.bind({}, dispatch),
     loadLast24Hours: forLast24Hours.loadLast24Hours.bind({}, dispatch),
     loadLastSevenDayComparison: forLastSevenDayComparison.loadLastSevenDayComparison.bind({}, dispatch),

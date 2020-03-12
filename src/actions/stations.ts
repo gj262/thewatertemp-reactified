@@ -1,9 +1,25 @@
 import { Dispatch } from "redux";
 import axios from "axios";
-import { ActionTypes, Station } from "../types";
+import { ActionTypes, Station, LocalStorage } from "../types";
 import { DEFAULTS } from "../defaults";
 
-export function loadStations(dispatch: Dispatch) {
+const STATIONS = "stations";
+
+export function loadStations(dispatch: Dispatch, localStorage: LocalStorage) {
+  const stored = localStorage.getItem(STATIONS);
+  let stations;
+  if (stored) {
+    try {
+      stations = JSON.parse(stored).stations;
+    } catch (e) {}
+  }
+  if (stations) {
+    dispatch({
+      type: ActionTypes.STATIONS_LOADED,
+      payload: { stations }
+    });
+  }
+
   dispatch({
     type: ActionTypes.LOADING_STATIONS
   });
@@ -37,6 +53,8 @@ export function loadStations(dispatch: Dispatch) {
         type: ActionTypes.STATIONS_LOADED,
         payload: { stations }
       });
+
+      localStorage.setItem(STATIONS, JSON.stringify({ stations }));
     })
     .catch(error => {
       console.log(error.toJSON());

@@ -15,13 +15,18 @@ const positiveReplyData = {
   ]
 };
 
+const notInLocalStorage = {
+  getItem: jest.fn((x: string) => null),
+  setItem: jest.fn()
+};
+
 it("dispatches loading", async () => {
   const dispatch = jest.fn();
   nock(DEFAULTS.NOAA_API_HOSTNAME)
     .get(DEFAULTS.STATION_LIST_PATH)
     .reply(200, positiveReplyData);
 
-  await loadStations(dispatch);
+  await loadStations(dispatch, notInLocalStorage);
 
   expect(dispatch).toBeCalledWith({
     type: ActionTypes.LOADING_STATIONS
@@ -34,7 +39,7 @@ it("hits the station list API", async () => {
     .get(DEFAULTS.STATION_LIST_PATH)
     .reply(200, positiveReplyData);
 
-  await loadStations(dispatch);
+  await loadStations(dispatch, notInLocalStorage);
 
   expect(catchit.isDone()).toBeTruthy();
 });
@@ -45,7 +50,7 @@ it("dispatches the list", async () => {
     .get(DEFAULTS.STATION_LIST_PATH)
     .reply(200, positiveReplyData);
 
-  await loadStations(dispatch);
+  await loadStations(dispatch, notInLocalStorage);
 
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
@@ -59,6 +64,28 @@ it("dispatches the list", async () => {
   });
 });
 
+it("caches the list", async () => {
+  const dispatch = jest.fn();
+  const thisTestLocalStorage = {
+    getItem: jest.fn((x: string) => null),
+    setItem: jest.fn()
+  };
+  nock(DEFAULTS.NOAA_API_HOSTNAME)
+    .get(DEFAULTS.STATION_LIST_PATH)
+    .reply(200, positiveReplyData);
+
+  await loadStations(dispatch, thisTestLocalStorage);
+
+  expect(thisTestLocalStorage.setItem).toBeCalledTimes(1);
+  expect(thisTestLocalStorage.setItem.mock.calls[0][0]).toBe("stations");
+  expect(JSON.parse(thisTestLocalStorage.setItem.mock.calls[0][1])).toStrictEqual({
+    stations: [
+      { name: "Somewhere", id: "22" },
+      { name: "Elsewhere", id: "33" }
+    ]
+  });
+});
+
 it("dispatches an error for non 2xx", async () => {
   const dispatch = jest.fn();
   console.log = jest.fn();
@@ -66,7 +93,7 @@ it("dispatches an error for non 2xx", async () => {
     .get(DEFAULTS.STATION_LIST_PATH)
     .reply(500, positiveReplyData);
 
-  await loadStations(dispatch);
+  await loadStations(dispatch, notInLocalStorage);
 
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
@@ -82,7 +109,7 @@ it("dispatches an error for no stations", async () => {
     .get(DEFAULTS.STATION_LIST_PATH)
     .reply(200, {});
 
-  await loadStations(dispatch);
+  await loadStations(dispatch, notInLocalStorage);
 
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
@@ -102,7 +129,7 @@ it("dispatches an error for an error response", async () => {
       }
     });
 
-  await loadStations(dispatch);
+  await loadStations(dispatch, notInLocalStorage);
 
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
@@ -124,7 +151,7 @@ it("must have id and name / keeps 'state' / drops other fields", async () => {
       ]
     });
 
-  await loadStations(dispatch);
+  await loadStations(dispatch, notInLocalStorage);
 
   expect(dispatch).toBeCalledTimes(2);
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
@@ -133,6 +160,37 @@ it("must have id and name / keeps 'state' / drops other fields", async () => {
       stations: [
         { id: "3", name: "3, 3", state: "3" },
         { id: "4", name: "4" }
+      ]
+    }
+  });
+});
+
+test("uses the cached stations if present but still refreshes", async () => {
+  const dispatch = jest.fn();
+  nock(DEFAULTS.NOAA_API_HOSTNAME)
+    .get(DEFAULTS.STATION_LIST_PATH)
+    .reply(500, positiveReplyData);
+  const localStorage = {
+    getItem: jest.fn((x: string) => {
+      return JSON.stringify({
+        stations: [
+          { name: "Somewhere", id: "22" },
+          { name: "Elsewhere", id: "33" }
+        ]
+      });
+    }),
+    setItem: jest.fn()
+  };
+
+  await loadStations(dispatch, localStorage);
+
+  expect(dispatch).toBeCalledTimes(3);
+  expect(dispatch.mock.calls[0][0]).toStrictEqual({
+    type: ActionTypes.STATIONS_LOADED,
+    payload: {
+      stations: [
+        { name: "Somewhere", id: "22" },
+        { name: "Elsewhere", id: "33" }
       ]
     }
   });
