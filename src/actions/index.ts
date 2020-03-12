@@ -8,7 +8,7 @@ import * as forLast24Hours from "./last24Hours";
 import * as forLastSevenDayComparison from "./lastSevenDayComparison";
 import * as forTodayInPriorYearsComparison from "./todayInPriorYears";
 
-export default function makeActions(dispatch: Dispatch, localStorage: LocalStorage): ActionTypes {
+export default function makeActions(dispatch: Dispatch, localStorage: LocalStorage): ActionMethods {
   return {
     loadUserPreferences: forUserPreferences.loadUserPreferences.bind({}, dispatch, localStorage),
     updateUserPreferences: forUserPreferences.updateUserPreferences.bind({}, dispatch, localStorage),
@@ -20,7 +20,7 @@ export default function makeActions(dispatch: Dispatch, localStorage: LocalStora
   };
 }
 
-export interface ActionTypes {
+export interface ActionMethods {
   loadUserPreferences: () => void;
   updateUserPreferences: (userPreferences: UserPreferences) => void;
   loadStations: () => Promise<void>;

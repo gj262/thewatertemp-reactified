@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { RootState } from "../reducers";
-import makeActions, { ActionTypes } from "../actions";
+import makeActions, { ActionMethods } from "../actions";
 import AllComponents, { ComponentTypes } from "../components";
 import { ComparisonDescription, ComparisonList, TemperatureDataIds } from "../types";
 import * as fromTemperatureData from "../reducers/temperatureData";
@@ -22,9 +22,9 @@ export interface ComparisonComponentTypes {
   ChooseComparison: ComponentTypes["ChooseComparison"];
 }
 
-export interface ComparisonActionTypes {
-  loadLastSevenDayComparison: ActionTypes["loadLastSevenDayComparison"];
-  loadTodayInPriorYearsComparison: ActionTypes["loadTodayInPriorYearsComparison"];
+export interface ComparisonActionMethods {
+  loadLastSevenDayComparison: ActionMethods["loadLastSevenDayComparison"];
+  loadTodayInPriorYearsComparison: ActionMethods["loadTodayInPriorYearsComparison"];
 }
 
 export class Comparison extends React.Component<ComparisonProps> {
@@ -79,7 +79,7 @@ const InjectComponentsAndActions: React.FunctionComponent<PropsFromAbove & Props
 );
 
 interface PropsFromDependencyInjection {
-  actions: ComparisonActionTypes;
+  actions: ComparisonActionMethods;
   Components: ComparisonComponentTypes;
 }
 

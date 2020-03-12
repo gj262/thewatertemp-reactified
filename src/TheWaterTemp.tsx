@@ -7,7 +7,7 @@ import { RootState } from "./reducers";
 import * as fromUserPreferences from "./reducers/userPreferences";
 import * as fromStations from "./reducers/stations";
 import * as fromTemperatureData from "./reducers/temperatureData";
-import makeActions, { ActionTypes } from "./actions";
+import makeActions, { ActionMethods } from "./actions";
 import AllComponents, { ComponentTypes } from "./components";
 import AllContainers, { ContainerTypes } from "./containers";
 import { TemperatureScale, UserPreferences, Station, Temperature, TemperatureRange, TemperatureDataIds } from "./types";
@@ -28,12 +28,12 @@ export interface TheWaterTempContainerTypes {
   Comparison: ContainerTypes["Comparison"];
 }
 
-export interface TheWaterTempActionTypes {
-  loadUserPreferences: ActionTypes["loadUserPreferences"];
-  updateUserPreferences: ActionTypes["updateUserPreferences"];
-  loadStations: ActionTypes["loadStations"];
-  loadLatestTemperature: ActionTypes["loadLatestTemperature"];
-  loadLast24Hours: ActionTypes["loadLast24Hours"];
+export interface TheWaterTempActionMethods {
+  loadUserPreferences: ActionMethods["loadUserPreferences"];
+  updateUserPreferences: ActionMethods["updateUserPreferences"];
+  loadStations: ActionMethods["loadStations"];
+  loadLatestTemperature: ActionMethods["loadLatestTemperature"];
+  loadLast24Hours: ActionMethods["loadLast24Hours"];
 }
 
 export class TheWaterTemp extends React.Component<TheWaterTempProps> {
@@ -218,7 +218,7 @@ const InjectComponentsAndActions: React.FunctionComponent<PropsFromStore & Props
 };
 
 interface PropsFromDependencyInjection {
-  actions: TheWaterTempActionTypes;
+  actions: TheWaterTempActionMethods;
   addRoutingState: (stationId: string, comparisonId: TemperatureDataIds) => void;
   Components: TheWaterTempComponentTypes;
   Containers: TheWaterTempContainerTypes;
