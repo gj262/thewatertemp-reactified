@@ -1,4 +1,4 @@
-import axios, { AxiosPromise } from "axios";
+import axios from "axios";
 import { Dispatch } from "redux";
 
 import { getDataFromResponseOrReject, cleanData, min, max, avg, rejectNoData } from "./fetchData";
@@ -10,7 +10,7 @@ export function loadTodayInPriorYears(
   stationId: string,
   latestStationTime: Date,
   endAfter: number = 5
-): AxiosPromise {
+): { promise: Promise<void>; cancel: () => void } {
   const meta = { stationId, dataId: TemperatureDataIds.TODAY_IN_PRIOR_YEARS };
 
   dispatch({
@@ -18,18 +18,21 @@ export function loadTodayInPriorYears(
     meta
   });
 
-  return getTodaysDataForYear(latestStationTime.getFullYear() - 1, []);
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
 
-  function getTodaysDataForYear(year: number, consecutiveFailingYears: number[]): Promise<any> {
+  return { promise: getTodaysDataForYear(latestStationTime.getFullYear() - 1, []), cancel: source.cancel };
+
+  function getTodaysDataForYear(year: number, consecutiveFailingYears: number[]): Promise<void> {
     return axios
-      .get(getURLForYear(year))
+      .get(getURLForYear(year), { cancelToken: source.token })
       .then(getDataFromResponseOrReject)
       .then(cleanData)
       .then(rejectNoData)
       .then(handleData)
       .catch(handleError);
 
-    function handleData(data: Temperature[]): AxiosPromise {
+    function handleData(data: Temperature[]): Promise<void> {
       consecutiveFailingYears.forEach((failedYear: number) => {
         dispatch({
           type: ActionTypes.PARTIAL_COMPARISON_LIST_LOAD,
@@ -56,7 +59,7 @@ export function loadTodayInPriorYears(
       return getTodaysDataForYear(year - 1, []);
     }
 
-    function handleError(error: any): AxiosPromise | undefined {
+    function handleError(error: any): Promise<void> | undefined {
       try {
         console.log(error.toJSON());
       } catch (e) {}

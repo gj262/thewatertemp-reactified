@@ -1,5 +1,4 @@
 import { Dispatch } from "redux";
-import { AxiosPromise } from "axios";
 import { UserPreferences, LocalStorage } from "../types";
 import * as forUserPreferences from "./userPreferences";
 import * as forStations from "./stations";
@@ -27,5 +26,9 @@ export interface ActionMethods {
   loadLatestTemperature: (stationId: string) => Promise<void>;
   loadLast24Hours: (stationId: string) => Promise<void>;
   loadLastSevenDayComparison: (stationId: string, latestStationTime: Date) => Promise<void>;
-  loadTodayInPriorYearsComparison: (stationId: string, latestStationTime: Date, endAfter?: number) => AxiosPromise;
+  loadTodayInPriorYearsComparison: (
+    stationId: string,
+    latestStationTime: Date,
+    endAfter?: number
+  ) => { promise: Promise<void>; cancel: () => void };
 }

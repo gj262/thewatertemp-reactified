@@ -40,7 +40,12 @@ function commonTest(overrideProps: Partial<ComparisonProps>) {
 function makeMockActions() {
   return {
     loadLastSevenDayComparison: jest.fn(),
-    loadTodayInPriorYearsComparison: jest.fn()
+    loadTodayInPriorYearsComparison: jest.fn((): { promise: Promise<void>; cancel: () => void } => {
+      return {
+        promise: new Promise(() => null),
+        cancel: () => null
+      };
+    })
   };
 }
 

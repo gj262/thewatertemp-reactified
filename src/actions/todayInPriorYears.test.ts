@@ -39,7 +39,7 @@ it("dispatches loading", async () => {
   const dispatch = jest.fn();
   makeNocks();
 
-  await loadTodayInPriorYears(dispatch, testStationId, latestStationTime, 1);
+  await loadTodayInPriorYears(dispatch, testStationId, latestStationTime, 1).promise;
 
   expect(dispatch.mock.calls[0][0]).toStrictEqual({
     type: ActionTypes.LOADING_TEMPERATURE_DATA,
@@ -54,7 +54,7 @@ it("dispatches the first year", async () => {
   const dispatch = jest.fn();
   makeNocks();
 
-  await loadTodayInPriorYears(dispatch, testStationId, latestStationTime, 1);
+  await loadTodayInPriorYears(dispatch, testStationId, latestStationTime, 1).promise;
 
   expect(dispatch.mock.calls[1][0]).toStrictEqual({
     type: ActionTypes.PARTIAL_COMPARISON_LIST_LOAD,
@@ -79,7 +79,7 @@ it("and the next", async () => {
   const dispatch = jest.fn();
   makeNocks();
 
-  await loadTodayInPriorYears(dispatch, testStationId, latestStationTime, 1);
+  await loadTodayInPriorYears(dispatch, testStationId, latestStationTime, 1).promise;
 
   expect(dispatch.mock.calls[2][0]).toStrictEqual({
     type: ActionTypes.PARTIAL_COMPARISON_LIST_LOAD,
@@ -104,7 +104,7 @@ it("finishes", async () => {
   const dispatch = jest.fn();
   makeNocks();
 
-  await loadTodayInPriorYears(dispatch, testStationId, latestStationTime, 2);
+  await loadTodayInPriorYears(dispatch, testStationId, latestStationTime, 2).promise;
 
   expect(dispatch.mock.calls[3][0]).toStrictEqual({
     type: ActionTypes.COMPLETED_COMPARISON_LIST_LOAD,
@@ -150,7 +150,7 @@ it("handles gaps", async () => {
   const dispatch = jest.fn();
   makeNocks2();
 
-  await loadTodayInPriorYears(dispatch, testStationId, latestStationTime, 2);
+  await loadTodayInPriorYears(dispatch, testStationId, latestStationTime, 2).promise;
 
   expect(dispatch.mock.calls[2][0]).toStrictEqual({
     type: ActionTypes.PARTIAL_COMPARISON_LIST_LOAD,

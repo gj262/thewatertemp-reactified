@@ -28,6 +28,8 @@ export interface ComparisonActionMethods {
 }
 
 export class Comparison extends React.Component<ComparisonProps> {
+  cancelLoad: () => void = () => null;
+
   comparisons: ComparisonDescription[] = [
     { id: TemperatureDataIds.LAST_SEVEN_DAYS, label: "Last 7 days" },
     { id: TemperatureDataIds.TODAY_IN_PRIOR_YEARS, label: "Today in prior years" }
@@ -56,7 +58,7 @@ export class Comparison extends React.Component<ComparisonProps> {
         actions.loadLastSevenDayComparison(stationId, latestStationTime);
         break;
       case TemperatureDataIds.TODAY_IN_PRIOR_YEARS:
-        actions.loadTodayInPriorYearsComparison(stationId, latestStationTime);
+        this.cancelLoad = actions.loadTodayInPriorYearsComparison(stationId, latestStationTime).cancel;
         break;
       default:
         throw new Error("Unimplemented comparison: " + comparisonId);
@@ -67,8 +69,13 @@ export class Comparison extends React.Component<ComparisonProps> {
     const { stationId, comparisonId } = this.props;
 
     if (stationId !== prevProps.stationId || comparisonId !== prevProps.comparisonId) {
+      this.cancelLoad();
       this.loadComparison();
     }
+  }
+
+  componentWillUnmount() {
+    this.cancelLoad();
   }
 }
 
