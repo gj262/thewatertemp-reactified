@@ -36,7 +36,8 @@ export default function temperatureData(state: TemperatureDataState = {}, action
   switch (action.type) {
     case ActionTypes.LOADING_TEMPERATURE_DATA:
       stationState = state[action.meta.stationId] || {};
-      temperatureDataState = stationState[action.meta.dataId] || { isLoading: true };
+      temperatureDataState =
+        action.meta.dataId in stationState ? { ...stationState[action.meta.dataId], isLoading: true } : { isLoading: true };
       stationState = {
         ...stationState,
         [action.meta.dataId]: temperatureDataState

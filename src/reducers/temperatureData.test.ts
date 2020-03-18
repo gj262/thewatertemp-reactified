@@ -237,30 +237,38 @@ it("provides the failure", () => {
   );
 });
 
-it("refresh is not loading", () => {
+it("refresh is loading", () => {
   const refreshState = reducer(reducer(reducer({}, sevenDayLoading), sevenDayLoads), sevenDayLoading);
-  expect(isLoading(refreshState, testStationId, TemperatureDataIds.LAST_SEVEN_DAYS)).toBe(false);
+  expect(isLoading(refreshState, testStationId, TemperatureDataIds.LAST_SEVEN_DAYS)).toBe(true);
 });
 
-it("refresh is not loading 2", () => {
+it("refresh is loading 2", () => {
   const refreshState = reducer(reducer(reducer(reducer({}, sevenDayLoading), sevenDayLoads), sevenDayLoading), sevenDayLoads);
   expect(isLoading(refreshState, testStationId, TemperatureDataIds.LAST_SEVEN_DAYS)).toBe(false);
 });
 
-it("refresh is not loading 3", () => {
+it("refresh is loading 3", () => {
   const refreshState = reducer(
     reducer(reducer(reducer({}, priorYearLoading), firstPriorYearLoad), completedLoad),
     priorYearLoading
   );
-  expect(isLoading(refreshState, testStationId, TemperatureDataIds.TODAY_IN_PRIOR_YEARS)).toBe(false);
+  expect(isLoading(refreshState, testStationId, TemperatureDataIds.TODAY_IN_PRIOR_YEARS)).toBe(true);
 });
 
-it("refresh is not loading 4", () => {
+it("refresh is loading 4", () => {
   const refreshState = reducer(
     reducer(reducer(reducer(reducer({}, priorYearLoading), firstPriorYearLoad), completedLoad), priorYearLoading),
     firstPriorYearLoad
   );
-  expect(isLoading(refreshState, testStationId, TemperatureDataIds.TODAY_IN_PRIOR_YEARS)).toBe(false);
+  expect(isLoading(refreshState, testStationId, TemperatureDataIds.TODAY_IN_PRIOR_YEARS)).toBe(true);
+});
+
+it("refresh does not delete existing data", () => {
+  const refreshState = reducer(reducer(reducer({}, singleTemperatureLoading), singleTemperatureLoads), singleTemperatureLoading);
+
+  expect(getTemperature(refreshState, singleTemperatureMeta.stationId, singleTemperatureMeta.dataId)).toStrictEqual(
+    singleTemperatureLoads.payload.data
+  );
 });
 
 it("refresh updates data", () => {
