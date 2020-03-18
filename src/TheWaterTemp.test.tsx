@@ -27,8 +27,10 @@ function commonAppTest(overrideProps: Partial<TheWaterTempProps>) {
       loadingStations={false}
       stations={null}
       errorLoadingStations={null}
+      loadingLatestTemperature={false}
       latestTemperature={null}
       errorLoadingLatestTemperature={null}
+      loadingLast24Hours={false}
       last24Hours={null}
       comparisonId={TemperatureDataIds.LAST_SEVEN_DAYS}
       path=""
@@ -106,6 +108,8 @@ function makeMockComponentsWithCallbackTriggers() {
     mockContainers: containerMocks
   };
 }
+
+jest.useFakeTimers();
 
 test("loads users preferences", () => {
   const { mockActions } = commonAppTest({});
@@ -304,8 +308,10 @@ test("loads the latest temp & last 24 for a new station", async () => {
       loadingStations={false}
       stations={null}
       errorLoadingStations={null}
+      loadingLatestTemperature={false}
       latestTemperature={new Temperature(76.1, TemperatureScale.FAHRENHEIT)}
       errorLoadingLatestTemperature={null}
+      loadingLast24Hours={false}
       last24Hours={null}
       comparisonId={TemperatureDataIds.LAST_SEVEN_DAYS}
       path=""
@@ -324,4 +330,23 @@ test("The time passed to comparison is based on the latest recording", () => {
   });
 
   expect(getByText(/COMPARISON\s+1583483400000/)).not.toBeNull();
+});
+
+test("refreshes the latest values", () => {
+  const { mockActions } = commonAppTest({ stationId: "22" });
+
+  jest.runOnlyPendingTimers();
+
+  expect(mockActions.loadLatestTemperature).toBeCalledTimes(2);
+  expect(mockActions.loadLast24Hours).toBeCalledTimes(2);
+});
+
+test("refreshes again", () => {
+  const { mockActions } = commonAppTest({ stationId: "22" });
+
+  jest.runOnlyPendingTimers();
+  jest.runOnlyPendingTimers();
+
+  expect(mockActions.loadLatestTemperature).toBeCalledTimes(3);
+  expect(mockActions.loadLast24Hours).toBeCalledTimes(3);
 });

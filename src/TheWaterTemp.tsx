@@ -37,6 +37,8 @@ export interface TheWaterTempActionMethods {
 }
 
 export class TheWaterTemp extends React.Component<TheWaterTempProps> {
+  refreshTimer: number = 0;
+
   render() {
     const {
       Components,
@@ -47,8 +49,10 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
       errorLoadingStations,
       station,
       invalidStationId,
+      loadingLatestTemperature,
       latestTemperature,
       errorLoadingLatestTemperature,
+      loadingLast24Hours,
       last24Hours,
       stationId,
       comparisonId
@@ -96,9 +100,10 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
               />
             }
             large
+            isLoading={loadingLatestTemperature}
           />
           <h2>Over the last 24 hours:</h2>
-          <Components.TemperatureRange range={last24Hours || undefined} />
+          <Components.TemperatureRange range={last24Hours || undefined} isLoading={loadingLast24Hours} />
           <h2>Compare to:</h2>
           <Containers.Comparison
             stationId={stationId}
@@ -123,6 +128,8 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
     }
     actions.loadLatestTemperature(stationId);
     actions.loadLast24Hours(stationId);
+
+    this.refreshTimer = window.setInterval(this.refreshLatestTemperatures, 15 * 60 * 1000);
   }
 
   onTemperatureScaleChange = (scale: TemperatureScale) => {
@@ -153,6 +160,17 @@ export class TheWaterTemp extends React.Component<TheWaterTempProps> {
       actions.loadLatestTemperature(stationId);
       actions.loadLast24Hours(stationId);
     }
+  }
+
+  refreshLatestTemperatures = () => {
+    const { actions, stationId } = this.props;
+
+    actions.loadLatestTemperature(stationId);
+    actions.loadLast24Hours(stationId);
+  };
+
+  componentWillUnmount() {
+    window.clearInterval(this.refreshTimer);
   }
 }
 
@@ -268,12 +286,14 @@ const mapStateToProps = (state: RootState, ownProps: PropsFromRouting) => {
     stations: fromStations.getStations(state.stations),
     errorLoadingStations: fromStations.getFailureMessage(state.stations),
     ...stationProps,
+    loadingLatestTemperature: fromTemperatureData.isLoading(state.temperatureData, stationId, TemperatureDataIds.LATEST),
     latestTemperature,
     errorLoadingLatestTemperature: fromTemperatureData.getFailureMessage(
       state.temperatureData,
       stationId,
       TemperatureDataIds.LATEST
     ),
+    loadingLast24Hours: fromTemperatureData.isLoading(state.temperatureData, stationId, TemperatureDataIds.LAST_24_HOURS),
     last24Hours,
     comparisonId
   };
@@ -290,8 +310,10 @@ interface PropsFromStore {
   stationId: string;
   station?: Station;
   invalidStationId?: string;
+  loadingLatestTemperature: boolean;
   latestTemperature: Temperature | null;
   errorLoadingLatestTemperature: string | null;
+  loadingLast24Hours: boolean;
   last24Hours: TemperatureRange | null;
   comparisonId: TemperatureDataIds;
 }
